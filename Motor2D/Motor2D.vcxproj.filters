@@ -43,6 +43,9 @@
     <ClCompile Include="App.cpp">
       <Filter>Project 2\App//Module</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Project 2\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PugiXml\src\pugiconfig.hpp">
@@ -95,6 +98,12 @@
     </ClInclude>
     <ClInclude Include="Module.h">
       <Filter>Project 2\App//Module</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Project 2\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Project 2\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

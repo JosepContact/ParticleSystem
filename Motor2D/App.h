@@ -16,6 +16,7 @@ class Audio;
 class FileSystem;
 class Scene;
 class Fonts;
+class ParticleSystem;
 
 class App
 {
@@ -88,7 +89,7 @@ public:
 	Scene*				scene = NULL;
 	FileSystem*			fs = NULL;
 	Fonts*				font = NULL;
-
+	ParticleSystem*		particlesystem = NULL;
 	bool				quit = false;
 
 private:

@@ -14,7 +14,7 @@
 		<atlas file="gui/atlas.png" />
 	</gui>
 	<window>
-		<resolution width="768" height="579" scale="1" />
+		<resolution width="1280" height="720" scale="1" />
 		<fullscreen value="false" />
 		<borderless value="false" />
 		<resizable value="false" />
@@ -29,4 +29,21 @@
 	<console>
 		<test />
 	</console>
+	<particlesystem>
+		<particle>
+			<Info>
+				<Name value= "BALL"/>
+				<ID value = "0"/>
+				<Collider w="" h=""/>
+			</Info>
+			<Textures>
+				<Texture value="textures/ball.png"/>
+			</Textures>
+			<Stats>
+				<Lifespan= "2"/>
+			</Stats>
+			<Animations>
+			</Animations>
+		</particle>
+	</particlesystem>
 </config>

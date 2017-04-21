@@ -8,6 +8,7 @@
 #include "Audio.h"
 #include "Scene.h"
 #include "FileSystem.h"
+#include "ParticleSystem.h"
 #include "Fonts.h"
 #include "App.h"
 #include "p2Log.h"
@@ -15,7 +16,6 @@
 // Constructor
 App::App(int argc, char* args[]) : argc(argc), args(args)
 {
-	PERF_START(ptimer);
 
 	input = new Input();
 	win = new Window();
@@ -25,6 +25,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	scene = new Scene();
 	fs = new FileSystem();
 	font = new Fonts();
+	particlesystem = new ParticleSystem();
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
@@ -33,15 +34,15 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(win);
 	AddModule(tex);
 	AddModule(audio);
+	AddModule(particlesystem);
 	AddModule(font);
-
+	
 	// scene last
 	AddModule(scene);
 
 	// render last to swap buffer
 	AddModule(render);
 
-	PERF_PEEK(ptimer);
 }
 
 // Destructor
