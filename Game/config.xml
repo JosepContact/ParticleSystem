@@ -27,7 +27,6 @@
 		<folder>maps/</folder>
 	</map>
 	<console>
-		<test />
 	</console>
 	<particlesystem>
 		<particle>
@@ -40,10 +39,8 @@
 				<Texture value="textures/ball.png"/>
 			</Textures>
 			<Stats>
-				<Lifespan= "2"/>
+				<Lifespan value = "2"/>
 			</Stats>
-			<Animations>
-			</Animations>
 		</particle>
 	</particlesystem>
 </config>

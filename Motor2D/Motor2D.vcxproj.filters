@@ -40,11 +40,11 @@
     <ClCompile Include="Main.cpp">
       <Filter>Project 2\App//Module</Filter>
     </ClCompile>
-    <ClCompile Include="App.cpp">
-      <Filter>Project 2\App//Module</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleSystem.cpp">
       <Filter>Project 2\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Project 2\App//Module</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -93,9 +93,6 @@
     <ClInclude Include="p2Point.h">
       <Filter>Project 2</Filter>
     </ClInclude>
-    <ClInclude Include="App.h">
-      <Filter>Project 2\App//Module</Filter>
-    </ClInclude>
     <ClInclude Include="Module.h">
       <Filter>Project 2\App//Module</Filter>
     </ClInclude>
@@ -103,7 +100,10 @@
       <Filter>Project 2\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
-      <Filter>Project 2\Modules</Filter>
+      <Filter>Project 2\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Project 2\App//Module</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

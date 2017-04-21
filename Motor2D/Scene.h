@@ -2,7 +2,7 @@
 #define __SCENE_H__
 
 #include "Module.h"
-
+#include "ParticleSystem.h"
 struct SDL_Texture;
 
 class Scene : public Module
@@ -34,6 +34,7 @@ public:
 
 private:
 	SDL_Texture* debug_tex;
+
 };
 
 #endif // __SCENE_H__
