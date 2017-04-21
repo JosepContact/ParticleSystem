@@ -4,8 +4,10 @@
 
 #include "Module.h"
 #include <list>
+#include <string>
 using namespace std;
 
+#define GRAVITY -10;
 
 struct SDL_Texture;
 
@@ -13,6 +15,20 @@ enum ParticleType {
 	BALL,
 	EXPLOSION,
 	UNKNOWN
+};
+
+struct Info {
+	string name;
+	int id;
+	string path;
+	int lifespan;
+
+	void Set(string argname, int argid, string argpath, int arglifespan){
+		name = argname;
+		id = argid;
+		path = argpath;
+		lifespan = arglifespan;
+	}
 };
 
 class Particle {
@@ -23,6 +39,7 @@ public:
 	int angle; // (degrees)
 	int lifetime; // (s)
 	ParticleType type;
+	string name;
 
 	virtual void Update() {};
 	virtual void Draw() {};
@@ -31,7 +48,11 @@ public:
 
 class Ball : public Particle {
 public:
+	Ball(bool gravity, const char * path);
 	SDL_Texture* texture;
+
+	void Update();
+	void Draw();
 };
 
 class ParticleSystem : public Module {
@@ -55,6 +76,7 @@ public:
 
 private:
 	list<Particle*> particles;
+	vector<Info> info;
 };
 
 #endif

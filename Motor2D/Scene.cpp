@@ -28,7 +28,9 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-
+	pair<int, int> position(666, 0);
+	pair<int, int> force (0, 0);
+	Ball* example = (Ball*)App->particlesystem->CreateBall(position, force, false );
 	return true;
 }
 
