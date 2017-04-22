@@ -28,9 +28,11 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-	pair<int, int> position(666, 0);
-	pair<int, int> force (0, 0);
-	Ball* example = (Ball*)App->particlesystem->CreateBall(position, force, false );
+	pair<float, float> position(666, 0);
+	pair<float, float> force (0, 0);
+	pos = position;
+	forc = force;
+	example = (Ball*)App->particlesystem->CreateBall(position, force, true);
 	return true;
 }
 
@@ -43,6 +45,10 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
+		example = (Ball*)App->particlesystem->CreateBall(pos, forc, true);
+	}
+
 	return true;
 }
 

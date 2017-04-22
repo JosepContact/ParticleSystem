@@ -1,4 +1,5 @@
 #include "ParticleSystem.h"
+#include "Window.h"
 #include "Application.h"
 #include "Render.h"
 #include "Textures.h"
@@ -33,6 +34,7 @@ bool ParticleSystem::Awake(pugi::xml_node &config )
 
 bool ParticleSystem::Start()
 {
+	App->win->GetWindowSize(window_size.first, window_size.second);
 	return true;
 }
 
@@ -45,23 +47,30 @@ bool ParticleSystem::Update(float dt)
 	return true;
 }
 
-bool ParticleSystem::CleanUp()
+bool ParticleSystem::PostUpdate()
 {
 	for (list<Particle*>::iterator it = particles.begin(); it != particles.end(); ++it)
 	{
-		it._Ptr->_Myval->CleanUp();
-		if (it._Ptr->_Myval != nullptr)
-			delete it._Ptr->_Myval;
+		if (it._Ptr->_Myval->alive == false)
+			DestroyParticle(it._Ptr->_Myval);
 	}
 	return true;
 }
 
-Particle * ParticleSystem::CreateBall(pair<int, int> startingposition, pair<int, int> startingforce, bool gravity)
+bool ParticleSystem::CleanUp()
+{
+	for (list<Particle*>::iterator it = particles.begin(); it != particles.end(); ++it)
+	{
+		if (it._Ptr->_Myval != nullptr)
+			DestroyParticle(it._Ptr->_Myval);
+	}
+	return true;
+}
+
+Particle * ParticleSystem::CreateBall(pair<float, float> startingposition, pair<float, float> startingforce, bool gravity)
 {
 	Particle* ret;
-	ret = new Ball(true, info[BALL].path.c_str());
-	ret->force = startingforce;
-	ret->pos = startingposition;
+	ret = new Ball(true, info[BALL].path.c_str(), startingforce, startingposition);
 	ret->type = (ParticleType)info[BALL].id;
 	ret->name = info[BALL].name;
 	ret->lifetime = info[BALL].lifespan;
@@ -69,17 +78,54 @@ Particle * ParticleSystem::CreateBall(pair<int, int> startingposition, pair<int,
 	return ret;
 }
 
-
-Ball::Ball(bool gravity, const char* path)
+bool ParticleSystem::DestroyParticle(Particle * curr)
 {
+	bool ret = true;
+	if (curr != nullptr) {
+		particles.remove(curr);
+		curr->CleanUp();
+		delete curr;	
+	}
+	else ret = false;
+	return ret;
+}
+
+
+Ball::Ball(bool gravity, const char* path, pair<float, float> startingforce, pair<float, float> startingposition)
+{
+	force = startingforce;
+	pos = startingposition;
 	if (gravity) force.second += GRAVITY;
 	texture = App->tex->Load(path);
+	timer.Start();
 }
 
 void Ball::Update() {
+	float secs = timer.ReadSec();
+	pos.first = pos.first + spd.first * timer.ReadSec() + ((force.first / 2) * (timer.ReadSec() * timer.ReadSec()));
+	pos.second = pos.second + spd.second * timer.ReadSec() + ((force.second / 2) * (timer.ReadSec() * timer.ReadSec()));
 	Draw();
+	alive = IsAlive();
 }
 
 void Ball::Draw() {
 	App->render->Blit(texture, pos.first, pos.second);
+}
+bool Ball::IsAlive() {
+	bool ret = true;
+	if (timer.ReadSec() >= lifetime) {
+		ret = false;
+	}
+	else if (pos.first >= App->particlesystem->window_size.first || pos.second >= App->particlesystem->window_size.second)
+	{
+		ret = false;
+	}
+	//
+	//      COLLIDER EFFECT
+	//
+	return ret;
+}
+
+void Ball::CleanUp() {
+	App->tex->UnLoad(texture);
 }

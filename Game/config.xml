@@ -39,7 +39,7 @@
 				<Texture value="textures/ball.png"/>
 			</Textures>
 			<Stats>
-				<Lifespan value = "2"/>
+				<Lifespan value = "3"/>
 			</Stats>
 		</particle>
 	</particlesystem>

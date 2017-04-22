@@ -34,6 +34,9 @@ public:
 
 private:
 	SDL_Texture* debug_tex;
+	pair<float, float> pos;
+	pair<float, float> forc;
+	Ball* example;
 
 };
 
