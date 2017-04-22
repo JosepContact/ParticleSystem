@@ -25,8 +25,13 @@ bool ParticleSystem::Awake(pugi::xml_node &config )
 		int id = node.child("Info").child("ID").attribute("value").as_int();
 		string path(node.child("Textures").child("Texture").attribute("value").as_string());
 		int lifespan = node.child("Stats").child("Lifespan").attribute("value").as_int();
+		int w = node.child("Info").child("Collider").attribute("w").as_int();
+		int h = node.child("Info").child("Collider").attribute("h").as_int();
+		int rows = node.child("Animations").child("Animation").attribute("rows").as_int();
+		int columns = node.child("Animations").child("Animation").attribute("columns").as_int();
+		// -----------------------------
 		Info curr;
-		curr.Set(name, id, path, lifespan);
+		curr.Set(name, id, path, lifespan, w, h, rows, columns);
 		info.push_back(curr);
 	}
 	return true;
@@ -64,6 +69,7 @@ bool ParticleSystem::CleanUp()
 		if (it._Ptr->_Myval != nullptr)
 			DestroyParticle(it._Ptr->_Myval);
 	}
+	particles.clear();
 	return true;
 }
 
@@ -74,6 +80,17 @@ Particle * ParticleSystem::CreateBall(pair<float, float> startingposition, pair<
 	ret->type = (ParticleType)info[BALL].id;
 	ret->name = info[BALL].name;
 	ret->lifetime = info[BALL].lifespan;
+	particles.push_back(ret);
+	return ret;
+}
+
+Particle * ParticleSystem::CreateStaticBucle(pair<float, float> startingposition, ParticleType type)
+{
+	Particle* ret;
+	ret = new StaticBucle(info[type].path.c_str(), startingposition, info[type].w, info[type].h, info[type].rows, info[type].columns);
+	ret->type = (ParticleType)info[type].id;
+	ret->name = info[type].name;
+	ret->lifetime = info[type].lifespan;
 	particles.push_back(ret);
 	return ret;
 }
@@ -90,6 +107,9 @@ bool ParticleSystem::DestroyParticle(Particle * curr)
 	return ret;
 }
 
+// --------------------------
+//          BALL
+// --------------------------
 
 Ball::Ball(bool gravity, const char* path, pair<float, float> startingforce, pair<float, float> startingposition)
 {
@@ -127,5 +147,54 @@ bool Ball::IsAlive() {
 }
 
 void Ball::CleanUp() {
+	App->tex->UnLoad(texture);
+}
+
+// -----------------------
+//     STATIC BUCLES
+// -----------------------
+// NOTE: Static bucles include all particles that stay in place 
+// for an indefinite amount of time repeating (often) the same animation.
+
+StaticBucle::StaticBucle(const char * path, pair<float, float> startingposition, int w, int h, int rows, int columns)
+{
+	pos = startingposition;
+	texture = App->tex->Load(path);
+	SDL_Rect our_rect{0,0,w,h};
+
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < columns; j++) {
+			our_rect.x = j* w ;
+			our_rect.y = i* h;
+			anim.PushBack(our_rect);
+		}
+		our_rect.x = 0;
+	}
+	anim.loop = true;
+	anim.speed = 0.2f;
+	timer.Start();
+}
+
+void StaticBucle::Update()
+{
+	Draw();
+	int b = anim.frames[9].x;
+	int c = anim.frames[4].x;
+	int c2 = anim.frames[11].x;
+	alive = IsAlive();
+}
+
+void StaticBucle::Draw()
+{
+	App->render->Blit(texture, pos.first, pos.second, &anim.GetCurrentFrame());
+}
+
+bool StaticBucle::IsAlive()
+{
+	return true;
+}
+
+void StaticBucle::CleanUp()
+{
 	App->tex->UnLoad(texture);
 }

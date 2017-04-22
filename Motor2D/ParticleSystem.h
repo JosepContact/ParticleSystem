@@ -1,19 +1,24 @@
 #ifndef __PARTICLESYSTEM_H__
 #define __PARTICLESYSTEM_H__
-#include "SDL\include\SDL_pixels.h"
 
+#include "SDL\include\SDL_pixels.h"
+#include "SDL/include/SDL.h"
 #include "Module.h"
 #include "Timer.h"
+#include "Animation.h"
 #include <list>
 #include <string>
+
 using namespace std;
 
-#define GRAVITY 10;
+#define GRAVITY 10
 
 struct SDL_Texture;
 
 enum ParticleType {
 	BALL,
+	FIRE,
+	SMOKE,
 	EXPLOSION,
 	UNKNOWN
 };
@@ -23,25 +28,29 @@ struct Info {
 	int id;
 	string path;
 	int lifespan;
+	int w, h, rows, columns;
 
-	void Set(string argname, int argid, string argpath, int arglifespan){
+	void Set(string argname, int argid, string argpath, int arglifespan, int argw, int argh, int argrows, int argcolumns){
 		name = argname;
 		id = argid;
 		path = argpath;
 		lifespan = arglifespan;
+		w = argw;
+		h = argh;
+		rows = argrows;
+		columns = argcolumns;
 	}
 };
 
 class Particle {
 public:
 	pair<float, float> pos;
-	pair<float, float> spd;
-	pair<float, float> force;
-	int angle; // (degrees)
+
 	int lifetime; // (s)
 	bool alive = true;
 	ParticleType type;
 	string name;
+	
 
 	virtual void Update() {};
 	virtual void Draw() {};
@@ -57,11 +66,31 @@ public:
 
 	Timer timer;
 
+
+	pair<float, float> spd;
+	pair<float, float> force;
+	int angle; // (degrees)
+
 	void Update();
 	void Draw();
 	bool IsAlive();
 	void CleanUp();
 };
+
+class StaticBucle : public Particle {
+public:
+	StaticBucle(const char * path, pair<float, float> startingposition, int, int ,int, int);
+	SDL_Texture* texture;
+	Animation anim;
+
+	Timer timer;
+
+	void Update();
+	void Draw();
+	bool IsAlive();
+	void CleanUp();
+};
+
 
 class ParticleSystem : public Module {
 public:
@@ -81,6 +110,7 @@ public:
 	bool CleanUp();
 
 	Particle* CreateBall(pair<float,float> startingposition, pair<float,float> startingforce, bool gravity);
+	Particle* CreateStaticBucle(pair<float, float> startingposition, ParticleType type);
 	Particle* CreateExplosion(pair<float, float> startingposition);
 	bool DestroyParticle(Particle* curr);
 

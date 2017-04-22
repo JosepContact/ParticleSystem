@@ -41,6 +41,40 @@
 			<Stats>
 				<Lifespan value = "3"/>
 			</Stats>
+			<Animations>
+			</Animations>
+		</particle>
+		<particle>
+			<Info>
+				<Name value= "FIRE"/>
+				<ID value = "1"/>
+				<Collider w="64" h="128"/>
+			</Info>
+			<Textures>
+				<Texture value="textures/fire.png"/>
+			</Textures>
+			<Stats>
+				<Lifespan value = "10"/>
+			</Stats>
+			<Animations>
+				<Animation rows = "4" columns = "8"/>
+			</Animations>
+		</particle>
+		<particle>
+			<Info>
+				<Name value= "SMOKE"/>
+				<ID value = "2"/>
+				<Collider w="256" h="256"/>
+			</Info>
+			<Textures>
+				<Texture value="textures/smoke.png"/>
+			</Textures>
+			<Stats>
+				<Lifespan value = "10"/>
+			</Stats>
+			<Animations>
+				<Animation rows = "5" columns = "6"/>
+			</Animations>
 		</particle>
 	</particlesystem>
 </config>
