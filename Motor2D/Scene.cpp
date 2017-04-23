@@ -34,13 +34,19 @@ bool Scene::Start()
 	pair<float, float> force (0, 0);
 	pos = position;
 	forc = force;
-	example = (Ball*)App->particlesystem->CreateBall(position, force, true);
+	example = (MovableParticle*)App->particlesystem->CreateMovableParticle(position, force, true, BALL);
 	position.first = 100;
 	position.second = 300;
 	StaticBucle* fire = (StaticBucle*)App->particlesystem->CreateStaticBucle(position, false, FIRE);
 	position.first = 200;
 	position.second = 150;
 	StaticBucle* smoke = (StaticBucle*)App->particlesystem->CreateStaticBucle(position, true, SMOKE);
+
+	int x, y;
+	App->input->GetMousePosition(x, y);
+	pair<float, float> mousepos(x, y);
+
+	emitter = App->particlesystem->CreateEmitter(mousepos, false, 10, STAR);
 	return true;
 }
 
@@ -53,6 +59,10 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+	int x, y;
+	App->input->GetMousePosition(x, y);
+	pair<float, float> mousepos(x, y);
+	emitter->SetPos(mousepos);
 	/*
 	srand(time(NULL));
 	forc.first = ((float)(rand() % 20000 + 1) / 1000);
@@ -64,7 +74,7 @@ bool Scene::Update(float dt)
 	float dick2 = forc.second;
 	*/
 	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
-		example = (Ball*)App->particlesystem->CreateBall(pos, forc, true);
+		example = (MovableParticle*)App->particlesystem->CreateMovableParticle(pos, forc, true, BALL);
 	}
 
 	return true;

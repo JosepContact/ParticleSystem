@@ -37,8 +37,8 @@ private:
 	SDL_Texture* debug_tex;
 	pair<float, float> pos;
 	pair<float, float> forc;
-	Ball* example;
-
+	MovableParticle* example;
+	Emitter* emitter;
 };
 
 #endif // __SCENE_H__

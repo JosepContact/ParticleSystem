@@ -46,8 +46,23 @@
 		</particle>
 		<particle>
 			<Info>
-				<Name value= "FIRE"/>
+				<Name value= "STAR"/>
 				<ID value = "1"/>
+				<Collider w="" h=""/>
+			</Info>
+			<Textures>
+				<Texture value="textures/star.png"/>
+			</Textures>
+			<Stats>
+				<Lifespan value = "2"/>
+			</Stats>
+			<Animations>
+			</Animations>
+		</particle>
+		<particle>
+			<Info>
+				<Name value= "FIRE"/>
+				<ID value = "2"/>
 				<Collider w="64" h="128"/>
 			</Info>
 			<Textures>
@@ -63,7 +78,7 @@
 		<particle>
 			<Info>
 				<Name value= "SMOKE"/>
-				<ID value = "2"/>
+				<ID value = "3"/>
 				<Collider w="256" h="256"/>
 			</Info>
 			<Textures>

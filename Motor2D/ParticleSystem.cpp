@@ -6,7 +6,7 @@
 #include "p2Defs.h"
 #include "p2Log.h"
 #include <stdlib.h>  
-
+#include <time.h>
 
 ParticleSystem::ParticleSystem() : Module()
 {
@@ -39,6 +39,7 @@ bool ParticleSystem::Awake(pugi::xml_node &config )
 
 bool ParticleSystem::Start()
 {
+	srand(time(NULL));
 	App->win->GetWindowSize(window_size.first, window_size.second);
 	return true;
 }
@@ -48,6 +49,10 @@ bool ParticleSystem::Update(float dt)
 	for (list<Particle*>::iterator it = particles.begin(); it != particles.end(); ++it)
 	{
 		it._Ptr->_Myval->Update();
+	}
+	for (list<Emitter*>::iterator it = emitters.begin(); it != emitters.end(); ++it)
+	{
+		it._Ptr->_Myval->Update(dt);
 	}
 	return true;
 }
@@ -73,25 +78,46 @@ bool ParticleSystem::CleanUp()
 	return true;
 }
 
-Particle * ParticleSystem::CreateBall(pair<float, float> startingposition, pair<float, float> startingforce, bool gravity)
+Particle * ParticleSystem::CreateMovableParticle(pair<float, float> startingposition, pair<float, float> startingforce, bool gravity, ParticleType type)
 {
-	Particle* ret;
-	ret = new Ball(true, info[BALL].path.c_str(), startingforce, startingposition);
-	ret->type = (ParticleType)info[BALL].id;
-	ret->name = info[BALL].name;
-	ret->lifetime = info[BALL].lifespan;
-	particles.push_back(ret);
+	Particle* ret = nullptr;
+	if (particles.size() < MAX_PARTICLES)
+	{
+		ret = new MovableParticle(true, info[type].path.c_str(), startingforce, startingposition);
+		ret->type = (ParticleType)info[type].id;
+		ret->name = info[type].name;
+		ret->lifetime = info[type].lifespan;
+		particles.push_back(ret);
+	}
+	else {
+		LOG("Maximum particles achieved.");
+	}
 	return ret;
 }
 
 Particle * ParticleSystem::CreateStaticBucle(pair<float, float> startingposition, bool finite, ParticleType type)
 {
-	Particle* ret;
-	ret = new StaticBucle(info[type].path.c_str(), startingposition, info[type].w, info[type].h, info[type].rows, info[type].columns, finite);
-	ret->type = (ParticleType)info[type].id;
-	ret->name = info[type].name;
-	ret->lifetime = info[type].lifespan;
-	particles.push_back(ret);
+	Particle* ret = nullptr;
+	if (particles.size() < MAX_PARTICLES)
+	{
+		ret = new StaticBucle(info[type].path.c_str(), startingposition, info[type].w, info[type].h, info[type].rows, info[type].columns, finite);
+		ret->type = (ParticleType)info[type].id;
+		ret->name = info[type].name;
+		ret->lifetime = info[type].lifespan;
+		particles.push_back(ret);
+	}
+	else {
+		LOG("Maximum particles achieved.");
+	}
+	return ret;
+}
+
+Emitter * ParticleSystem::CreateEmitter(pair<float, float> startingposition, bool finite, float duration, ParticleType type)
+{
+	Emitter* ret = nullptr;
+	ret = new Emitter(startingposition, finite, duration);
+	ret->type = type;
+	emitters.push_back(ret);
 	return ret;
 }
 
@@ -111,7 +137,7 @@ bool ParticleSystem::DestroyParticle(Particle * curr)
 //          BALL
 // --------------------------
 
-Ball::Ball(bool gravity, const char* path, pair<float, float> startingforce, pair<float, float> startingposition)
+MovableParticle::MovableParticle(bool gravity, const char* path, pair<float, float> startingforce, pair<float, float> startingposition)
 {
 	force = startingforce;
 	pos = startingposition;
@@ -120,7 +146,7 @@ Ball::Ball(bool gravity, const char* path, pair<float, float> startingforce, pai
 	timer.Start();
 }
 
-void Ball::Update() {
+void MovableParticle::Update() {
 	float secs = timer.ReadSec();
 	pos.first = pos.first + spd.first * timer.ReadSec() + ((force.first / 2) * (timer.ReadSec() * timer.ReadSec()));
 	pos.second = pos.second + spd.second * timer.ReadSec() + ((force.second / 2) * (timer.ReadSec() * timer.ReadSec()));
@@ -128,10 +154,10 @@ void Ball::Update() {
 	alive = IsAlive();
 }
 
-void Ball::Draw() {
+void MovableParticle::Draw() {
 	App->render->Blit(texture, pos.first, pos.second);
 }
-bool Ball::IsAlive() {
+bool MovableParticle::IsAlive() {
 	bool ret = true;
 	if (timer.ReadSec() >= lifetime) {
 		ret = false;
@@ -146,7 +172,7 @@ bool Ball::IsAlive() {
 	return ret;
 }
 
-void Ball::CleanUp() {
+void MovableParticle::CleanUp() {
 	App->tex->UnLoad(texture);
 }
 
@@ -209,4 +235,36 @@ bool StaticBucle::IsAlive()
 void StaticBucle::CleanUp()
 {
 	App->tex->UnLoad(texture);
+}
+
+Emitter::Emitter(pair<float, float> startingposition, bool finite, float duration) : pos(startingposition), finite(finite), lifetime(duration)
+{
+}
+
+void Emitter::Update(float dt)
+{
+	force.first = (float)(rand() % 20 + 1);
+	bool negative = rand() % 2;
+	if (negative) force.first *= -1;
+	force.second = (float)(rand() % 20 + 1);
+
+	negative = rand() % 2;
+	if (negative) force.second *= -1;
+	App->particlesystem->CreateMovableParticle(pos, force, true, STAR);
+
+	alive = IsAlive();
+}
+
+bool Emitter::IsAlive()
+{
+	bool ret = true;
+	if (timer.ReadSec() >= lifetime && finite == true) {
+		ret = false;
+	}
+	return ret;
+}
+
+void Emitter::SetPos(pair<float, float> pos)
+{
+	this->pos = pos;
 }

@@ -12,11 +12,14 @@
 using namespace std;
 
 #define GRAVITY 10
+#define MAX_PARTICLES 100
+#define MAX_PARTICLES_EMITTER 40
 
 struct SDL_Texture;
 
 enum ParticleType {
 	BALL,
+	STAR,
 	FIRE,
 	SMOKE,
 	EXPLOSION,
@@ -59,9 +62,9 @@ public:
 
 };
 
-class Ball : public Particle {
+class MovableParticle : public Particle {
 public:
-	Ball(bool gravity, const char * path, pair<float, float> startingposition, pair<float, float> startingforce);
+	MovableParticle(bool gravity, const char * path, pair<float, float> startingposition, pair<float, float> startingforce);
 	SDL_Texture* texture;
 
 	Timer timer;
@@ -91,6 +94,24 @@ public:
 	void CleanUp();
 };
 
+class Emitter {
+public:
+	Emitter(pair<float, float> startingposition, bool finite, float duration);
+	pair<float, float> pos;
+	pair<float, float> force;
+	float lifetime;
+	Timer timer;
+	bool finite = false;
+	bool alive = true;
+	ParticleType type;
+
+
+	void Update(float dt);
+	bool IsAlive();
+	void SetPos(pair<float, float> pos);
+	//void SetForce(pair<float, float> force);
+};
+
 
 class ParticleSystem : public Module {
 public:
@@ -109,13 +130,16 @@ public:
 
 	bool CleanUp();
 
-	Particle* CreateBall(pair<float,float> startingposition, pair<float,float> startingforce, bool gravity);
+	Particle* CreateMovableParticle(pair<float,float> startingposition, pair<float,float> startingforce, bool gravity, ParticleType type);
 	Particle* CreateStaticBucle(pair<float, float> startingposition, bool finite, ParticleType type);
 	Particle* CreateExplosion(pair<float, float> startingposition);
+	Emitter* CreateEmitter(pair<float, float> startingposition, bool finite, float duration, ParticleType type);
 	bool DestroyParticle(Particle* curr);
 
 private:
 	list<Particle*> particles;
+	list<Emitter*> emitters;
+
 	vector<Info> info;
 public:
 	pair<uint, uint> window_size;
