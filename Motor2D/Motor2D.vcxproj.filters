@@ -46,6 +46,7 @@
     <ClCompile Include="Application.cpp">
       <Filter>Project 2\App//Module</Filter>
     </ClCompile>
+    <ClCompile Include="Collision.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PugiXml\src\pugiconfig.hpp">
@@ -104,6 +105,9 @@
     </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Project 2\App//Module</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Project 2\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

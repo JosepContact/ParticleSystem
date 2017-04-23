@@ -11,6 +11,7 @@
 #include "ParticleSystem.h"
 #include "Fonts.h"
 #include "Application.h"
+#include "Collision.h"
 #include "p2Log.h"
 
 // Constructor
@@ -26,6 +27,7 @@ Application::Application(int argc, char* args[]) : argc(argc), args(args)
 	fs = new FileSystem();
 	font = new Fonts();
 	particlesystem = new ParticleSystem();
+	collision = new Collision();
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
@@ -36,7 +38,8 @@ Application::Application(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(audio);
 	AddModule(particlesystem);
 	AddModule(font);
-	
+	AddModule(collision);
+
 	// scene last
 	AddModule(scene);
 

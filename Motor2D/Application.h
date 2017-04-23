@@ -17,6 +17,7 @@ class FileSystem;
 class Scene;
 class Fonts;
 class ParticleSystem;
+class Collision;
 
 class Application
 {
@@ -90,6 +91,7 @@ public:
 	FileSystem*			fs = NULL;
 	Fonts*				font = NULL;
 	ParticleSystem*		particlesystem = NULL;
+	Collision*			collision = NULL;
 	bool				quit = false;
 
 private:

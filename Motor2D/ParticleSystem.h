@@ -6,6 +6,7 @@
 #include "Module.h"
 #include "Timer.h"
 #include "Animation.h"
+#include "Collision.h"
 #include <list>
 #include <string>
 
@@ -13,10 +14,10 @@ using namespace std;
 
 #define GRAVITY 10
 #define MAX_PARTICLES 100
-#define MAX_PARTICLES_EMITTER 40
-#define EMITTER_SPEED 0.02
+#define EMITTER_SPEED 0.04
 
 struct SDL_Texture;
+class Collider;
 
 enum ParticleType {
 	BALL,
@@ -27,6 +28,7 @@ enum ParticleType {
 	UNKNOWN
 };
 
+// Info holds the data gathered in Awake.
 struct Info {
 	string name;
 	int id;
@@ -38,15 +40,18 @@ struct Info {
 		: name(argname), id(argid), path(argpath), lifespan(arglifespan), w(argw), h (argh), rows(argrows), columns(argcolumns){}
 };
 
+
 class Particle {
 public:
 	pair<float, float> pos;
 
 	int lifetime; // (s)
 	bool alive = true;
+
 	ParticleType type;
-	string name;
 	SDL_Texture* texture;
+	string name;
+	Collider* collider;
 
 	virtual void Update() {};
 	virtual void Draw() {};
@@ -61,10 +66,10 @@ public:
 
 	Timer timer;
 
-
 	pair<float, float> spd;
 	pair<float, float> force;
-	int angle; // (degrees)
+	bool gravity = false;
+
 
 	void Update();
 	void Draw();
@@ -75,11 +80,12 @@ public:
 class StaticBucle : public Particle {
 public:
 	StaticBucle(const char * path, pair<float, float> startingposition, int, int ,int, int, bool);
-	
-	Animation anim;
-	
+
 	Timer timer;
+
+	Animation anim;
 	bool finite = false;
+
 	void Update();
 	void Draw();
 	bool IsAlive();
@@ -89,6 +95,7 @@ public:
 class StaticFinite : public Particle {
 public:
 	StaticFinite(const char * path, pair<float, float> startingposition, int, int, int, int);
+
 	Animation anim;
 
 	void Update();
@@ -101,12 +108,19 @@ public:
 class Emitter {
 public:
 	Emitter(pair<float, float> startingposition, bool finite, float duration);
+
 	pair<float, float> pos;
+	// It is not actual force as in m/s^2.
 	pair<float, float> force;
-	pair<float, float> speed_orig;
-	float speed;
-	float lifetime;
+
 	Timer timer;
+
+	// Just a helper:
+	pair<float, float> speed_orig;
+	// Emision frequency:
+	float speed;
+
+	float lifetime;
 	bool finite = false;
 	bool alive = true;
 	ParticleType type;

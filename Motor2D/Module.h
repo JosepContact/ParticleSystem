@@ -16,7 +16,7 @@
 using namespace std;
 
 class App;
-
+class Collider;
 class Module
 {
 public:
@@ -60,6 +60,12 @@ public:
 	virtual bool PostUpdate()
 	{
 		return true;
+	}
+
+	//COLLISIONS
+	virtual void OnCollision(Collider* bodyA, Collider* bodyB)
+	{
+
 	}
 
 	// Called before quitting

@@ -75,6 +75,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="Fonts.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -93,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="Fonts.h" />
     <ClInclude Include="p2Defs.h" />

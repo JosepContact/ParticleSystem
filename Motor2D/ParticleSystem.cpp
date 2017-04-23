@@ -85,7 +85,7 @@ Particle * ParticleSystem::CreateMovableParticle(pair<float, float> startingposi
 	Particle* ret = nullptr;
 	if (particles.size() < MAX_PARTICLES)
 	{
-		ret = new MovableParticle(true, info[type].path.c_str(), startingforce, startingposition);
+		ret = new MovableParticle(gravity, info[type].path.c_str(), startingforce, startingposition);
 		ret->type = (ParticleType)info[type].id;
 		ret->name = info[type].name;
 		ret->lifetime = info[type].lifespan;
@@ -166,7 +166,7 @@ MovableParticle::MovableParticle(bool gravity, const char* path, pair<float, flo
 {
 	spd = startingforce;
 	pos = startingposition;
-	if (gravity) force.second += GRAVITY;
+	this->gravity = gravity;
 	// Deactivate gravity on moving particles by sending 'false' on creation
 	texture = App->tex->Load(path);
 	timer.Start();
@@ -176,7 +176,12 @@ void MovableParticle::Update() {
 	// These are the simple physics formulas I used for the particles.
 	float secs = timer.ReadSec();
 	pos.first = pos.first + spd.first * timer.ReadSec();
-	pos.second = pos.second + spd.second * timer.ReadSec() + ((GRAVITY / 2) * (timer.ReadSec() * timer.ReadSec()));
+	if (gravity) {
+		pos.second = pos.second + spd.second * timer.ReadSec() + ((GRAVITY / 2) * (timer.ReadSec() * timer.ReadSec()));
+	}
+	else {
+		pos.second = pos.second + spd.second * timer.ReadSec();
+	}
 	// You can be creative and use other movement functions so they follow new movement patterns!
 	Draw();
 	alive = IsAlive();
@@ -195,9 +200,6 @@ bool MovableParticle::IsAlive() {
 	{
 		ret = false;
 	}
-	//
-	//      COLLIDER EFFECT
-	//
 	return ret;
 }
 
@@ -259,9 +261,6 @@ bool StaticBucle::IsAlive()
 	{
 		ret = false;
 	}
-	//
-	//      COLLIDER EFFECT
-	//
 	return ret;
 }
 
@@ -319,9 +318,6 @@ bool StaticFinite::IsAlive()
 	else if (anim.Finished()) {
 		ret = false;
 	}
-	//
-	//      COLLIDER EFFECT
-	//
 	return ret;
 }
 
@@ -353,17 +349,19 @@ void Emitter::Update(float dt)
 	speed += dt;
 	if (speed > EMITTER_SPEED)
 	{
+
+		// Ideally you want to set up your own forces depending on the emitter.
 		force.first = (float)(rand() % 8 + 1);
 		bool negative = rand() % 2;
 		if (negative) force.first *= -1;
 		force.first += speed_orig.first;
-
+		// speed_orig is 0 unless stated otherwise with the SetSpd() method.
 		force.second = (float)(rand() % 8 + 1);
 		negative = rand() % 2;
 		if (negative) force.second *= -1;
 		force.second += speed_orig.second;
-
-		App->particlesystem->CreateMovableParticle(pos, force, false, STAR);
+		//
+		App->particlesystem->CreateMovableParticle(pos, force, true, STAR);
 		speed = 0;
 	}
 	alive = IsAlive();
