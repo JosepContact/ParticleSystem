@@ -17,6 +17,9 @@ ParticleSystem::~ParticleSystem()
 {
 }
 
+// We are loading all the information from config here.
+// Ideally we would have the position also taken from the xml.
+
 bool ParticleSystem::Awake(pugi::xml_node &config )
 {
 	for (pugi::xml_node node = config.child("particle"); node; node = node.next_sibling("particle"))
@@ -30,8 +33,7 @@ bool ParticleSystem::Awake(pugi::xml_node &config )
 		int rows = node.child("Animations").child("Animation").attribute("rows").as_int();
 		int columns = node.child("Animations").child("Animation").attribute("columns").as_int();
 		// -----------------------------
-		Info curr;
-		curr.Set(name, id, path, lifespan, w, h, rows, columns);
+		Info curr(name, id, path, lifespan, w, h, rows, columns);
 		info.push_back(curr);
 	}
 	return true;
@@ -112,6 +114,23 @@ Particle * ParticleSystem::CreateStaticBucle(pair<float, float> startingposition
 	return ret;
 }
 
+Particle * ParticleSystem::CreateStaticFinite(pair<float, float> startingposition, ParticleType type)
+{
+	Particle* ret = nullptr;
+	if (particles.size() < MAX_PARTICLES)
+	{
+		ret = new StaticFinite(info[type].path.c_str(), startingposition, info[type].w, info[type].h, info[type].rows, info[type].columns);
+		ret->type = (ParticleType)info[type].id;
+		ret->name = info[type].name;
+		ret->lifetime = info[type].lifespan;
+		particles.push_back(ret);
+	}
+	else {
+		LOG("Maximum particles achieved.");
+	}
+	return ret;
+}
+
 Emitter * ParticleSystem::CreateEmitter(pair<float, float> startingposition, bool finite, float duration, ParticleType type)
 {
 	Emitter* ret = nullptr;
@@ -134,22 +153,31 @@ bool ParticleSystem::DestroyParticle(Particle * curr)
 }
 
 // --------------------------
-//          BALL
+//     MOVABLE PARTICLES
 // --------------------------
+// Particles that are not meant to be static, which means
+// that they follow 'physics' laws and have speed and acceleration.
+// 1. Notice the code doesn't accept movable particles with animations,
+// you should be able to do it easily following the other particles guidelines.
+// 2. Notice the code introduces a lifetime to all particles automatically,
+// this can be removed, although I don't recommend it.
 
 MovableParticle::MovableParticle(bool gravity, const char* path, pair<float, float> startingforce, pair<float, float> startingposition)
 {
-	force = startingforce;
+	spd = startingforce;
 	pos = startingposition;
 	if (gravity) force.second += GRAVITY;
+	// Deactivate gravity on moving particles by sending 'false' on creation
 	texture = App->tex->Load(path);
 	timer.Start();
 }
 
 void MovableParticle::Update() {
+	// These are the simple physics formulas I used for the particles.
 	float secs = timer.ReadSec();
-	pos.first = pos.first + spd.first * timer.ReadSec() + ((force.first / 2) * (timer.ReadSec() * timer.ReadSec()));
-	pos.second = pos.second + spd.second * timer.ReadSec() + ((force.second / 2) * (timer.ReadSec() * timer.ReadSec()));
+	pos.first = pos.first + spd.first * timer.ReadSec();
+	pos.second = pos.second + spd.second * timer.ReadSec() + ((GRAVITY / 2) * (timer.ReadSec() * timer.ReadSec()));
+	// You can be creative and use other movement functions so they follow new movement patterns!
 	Draw();
 	alive = IsAlive();
 }
@@ -157,6 +185,7 @@ void MovableParticle::Update() {
 void MovableParticle::Draw() {
 	App->render->Blit(texture, pos.first, pos.second);
 }
+
 bool MovableParticle::IsAlive() {
 	bool ret = true;
 	if (timer.ReadSec() >= lifetime) {
@@ -179,8 +208,15 @@ void MovableParticle::CleanUp() {
 // -----------------------
 //     STATIC BUCLES
 // -----------------------
-// NOTE: Static bucles include all particles that stay in place 
-// for an indefinite amount of time repeating (often) the same animation.
+// Particles that stay in place for an indefinite amount
+// of time repeating (often) the same animation.
+// 1. The code makes all the animation print on the same place
+// following the same pattern. This is not ideal, you might want your code to
+// randomly print a different frame.
+// 2. You can give it a lifetime on the xml and send 'true' on creation. Or
+// You can send 'false' so it bucles forever.
+//
+// NOTICE that non finite particles that leave the screen are deleted, is that what your game needs?
 
 StaticBucle::StaticBucle(const char * path, pair<float, float> startingposition, int w, int h, int rows, int columns, bool argfinite)
 {
@@ -205,9 +241,6 @@ StaticBucle::StaticBucle(const char * path, pair<float, float> startingposition,
 void StaticBucle::Update()
 {
 	Draw();
-	int b = anim.frames[9].x;
-	int c = anim.frames[4].x;
-	int c2 = anim.frames[11].x;
 	alive = IsAlive();
 }
 
@@ -237,21 +270,102 @@ void StaticBucle::CleanUp()
 	App->tex->UnLoad(texture);
 }
 
+
+// -----------------------
+//     FINITE BUCLES
+// -----------------------
+// Particles that stay in place for a fixed amount of time
+// due to its animation.
+// 1. This code deletes the particle after its animation is over.
+//
+// NOTICE that particles that leave the screen are deleted, is that what your game needs?
+
+StaticFinite::StaticFinite(const char * path, pair<float, float> startingposition, int w, int h, int rows, int columns)
+{
+	pos = startingposition;
+	texture = App->tex->Load(path);
+	SDL_Rect our_rect{ 0,0,w,h };
+
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < columns; j++) {
+			our_rect.x = j* w;
+			our_rect.y = i* h;
+			anim.PushBack(our_rect);
+		}
+		our_rect.x = 0;
+	}
+	anim.loop = false;
+	anim.speed = 0.2f;
+}
+
+void StaticFinite::Update()
+{
+	Draw();
+	alive = IsAlive();
+}
+
+void StaticFinite::Draw()
+{
+	App->render->Blit(texture, pos.first, pos.second, &anim.GetCurrentFrame());
+}
+
+bool StaticFinite::IsAlive()
+{
+	bool ret = true;
+	if (pos.first >= App->particlesystem->window_size.first || pos.second >= App->particlesystem->window_size.second)
+	{
+		ret = false;
+	}
+	else if (anim.Finished()) {
+		ret = false;
+	}
+	//
+	//      COLLIDER EFFECT
+	//
+	return ret;
+}
+
+void StaticFinite::CleanUp()
+{
+	App->tex->UnLoad(texture);
+}
+
+// -----------------------
+//     EMITTER
+// -----------------------
+// Emitters are tools that automatically create movable particles to (more or less)
+// randomised directions.
+//
+// 1. This Emetter ALWAYS creates finite particles. 'finite' on creation stands for
+// the lifetime of the emetter itself.
+// 2. #define EMITTER_SPEED at the beginning of the ParticleSystem.h define
+// the frequency of particle creation. It works with the dt send to the module in the Update.
+// 3. Emitters should always stop working outside the camera.
+// 5. SetPos and SetSpd functions can help you to create travelling emetters
+// for example: smoke from a rocket, thrown spells, etc
+
 Emitter::Emitter(pair<float, float> startingposition, bool finite, float duration) : pos(startingposition), finite(finite), lifetime(duration)
 {
 }
 
 void Emitter::Update(float dt)
 {
-	force.first = (float)(rand() % 20 + 1);
-	bool negative = rand() % 2;
-	if (negative) force.first *= -1;
-	force.second = (float)(rand() % 20 + 1);
+	speed += dt;
+	if (speed > EMITTER_SPEED)
+	{
+		force.first = (float)(rand() % 8 + 1);
+		bool negative = rand() % 2;
+		if (negative) force.first *= -1;
+		force.first += speed_orig.first;
 
-	negative = rand() % 2;
-	if (negative) force.second *= -1;
-	App->particlesystem->CreateMovableParticle(pos, force, true, STAR);
+		force.second = (float)(rand() % 8 + 1);
+		negative = rand() % 2;
+		if (negative) force.second *= -1;
+		force.second += speed_orig.second;
 
+		App->particlesystem->CreateMovableParticle(pos, force, false, STAR);
+		speed = 0;
+	}
 	alive = IsAlive();
 }
 
@@ -267,4 +381,9 @@ bool Emitter::IsAlive()
 void Emitter::SetPos(pair<float, float> pos)
 {
 	this->pos = pos;
+}
+
+void Emitter::SetSpd(pair<float, float> extra_speed)
+{
+	speed_orig = extra_speed;
 }

@@ -91,5 +91,21 @@
 				<Animation rows = "5" columns = "6"/>
 			</Animations>
 		</particle>
+		<particle>
+			<Info>
+				<Name value= "EXPLOSION"/>
+				<ID value = "4"/>
+				<Collider w="192" h="192"/>
+			</Info>
+			<Textures>
+				<Texture value="textures/explosion.png"/>
+			</Textures>
+			<Stats>
+				<Lifespan value = ""/>
+			</Stats>
+			<Animations>
+				<Animation rows = "5" columns = "5"/>
+			</Animations>
+		</particle>
 	</particlesystem>
 </config>

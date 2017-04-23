@@ -47,6 +47,10 @@ bool Scene::Start()
 	pair<float, float> mousepos(x, y);
 
 	emitter = App->particlesystem->CreateEmitter(mousepos, false, 10, STAR);
+	pair<float, float> pos(600, 200);
+
+	StaticFinite* bomb = (StaticFinite*)App->particlesystem->CreateStaticFinite(pos, EXPLOSION);
+
 	return true;
 }
 
@@ -59,20 +63,16 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+	/*
 	int x, y;
 	App->input->GetMousePosition(x, y);
 	pair<float, float> mousepos(x, y);
 	emitter->SetPos(mousepos);
-	/*
-	srand(time(NULL));
-	forc.first = ((float)(rand() % 20000 + 1) / 1000);
-	bool negative = rand() % 2;
-	if (negative) forc.first *= -1;
-	float dick = forc.first;
 
-	forc.second = ((float)(rand() % 20000 + 1) / 1000);
-	float dick2 = forc.second;
-	*/
+	App->input->GetMouseMotion(x, y);
+	pair<float, float> mousemot(x, y);
+	emitter->SetSpd(mousemot);
+*/
 	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
 		example = (MovableParticle*)App->particlesystem->CreateMovableParticle(pos, forc, true, BALL);
 	}

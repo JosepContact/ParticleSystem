@@ -14,6 +14,7 @@ using namespace std;
 #define GRAVITY 10
 #define MAX_PARTICLES 100
 #define MAX_PARTICLES_EMITTER 40
+#define EMITTER_SPEED 0.02
 
 struct SDL_Texture;
 
@@ -33,16 +34,8 @@ struct Info {
 	int lifespan;
 	int w, h, rows, columns;
 
-	void Set(string argname, int argid, string argpath, int arglifespan, int argw, int argh, int argrows, int argcolumns){
-		name = argname;
-		id = argid;
-		path = argpath;
-		lifespan = arglifespan;
-		w = argw;
-		h = argh;
-		rows = argrows;
-		columns = argcolumns;
-	}
+	Info::Info(string argname, int argid, string argpath, int arglifespan, int argw, int argh, int argrows, int argcolumns)
+		: name(argname), id(argid), path(argpath), lifespan(arglifespan), w(argw), h (argh), rows(argrows), columns(argcolumns){}
 };
 
 class Particle {
@@ -53,7 +46,7 @@ public:
 	bool alive = true;
 	ParticleType type;
 	string name;
-	
+	SDL_Texture* texture;
 
 	virtual void Update() {};
 	virtual void Draw() {};
@@ -65,7 +58,6 @@ public:
 class MovableParticle : public Particle {
 public:
 	MovableParticle(bool gravity, const char * path, pair<float, float> startingposition, pair<float, float> startingforce);
-	SDL_Texture* texture;
 
 	Timer timer;
 
@@ -83,9 +75,9 @@ public:
 class StaticBucle : public Particle {
 public:
 	StaticBucle(const char * path, pair<float, float> startingposition, int, int ,int, int, bool);
-	SDL_Texture* texture;
+	
 	Animation anim;
-
+	
 	Timer timer;
 	bool finite = false;
 	void Update();
@@ -94,11 +86,25 @@ public:
 	void CleanUp();
 };
 
+class StaticFinite : public Particle {
+public:
+	StaticFinite(const char * path, pair<float, float> startingposition, int, int, int, int);
+	Animation anim;
+
+	void Update();
+	void Draw();
+	bool IsAlive();
+	void CleanUp();
+};
+
+
 class Emitter {
 public:
 	Emitter(pair<float, float> startingposition, bool finite, float duration);
 	pair<float, float> pos;
 	pair<float, float> force;
+	pair<float, float> speed_orig;
+	float speed;
 	float lifetime;
 	Timer timer;
 	bool finite = false;
@@ -109,7 +115,7 @@ public:
 	void Update(float dt);
 	bool IsAlive();
 	void SetPos(pair<float, float> pos);
-	//void SetForce(pair<float, float> force);
+	void SetSpd(pair<float, float> extra_speed);
 };
 
 
@@ -132,7 +138,7 @@ public:
 
 	Particle* CreateMovableParticle(pair<float,float> startingposition, pair<float,float> startingforce, bool gravity, ParticleType type);
 	Particle* CreateStaticBucle(pair<float, float> startingposition, bool finite, ParticleType type);
-	Particle* CreateExplosion(pair<float, float> startingposition);
+	Particle* CreateStaticFinite(pair<float, float> startingposition, ParticleType type);
 	Emitter* CreateEmitter(pair<float, float> startingposition, bool finite, float duration, ParticleType type);
 	bool DestroyParticle(Particle* curr);
 
