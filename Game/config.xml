@@ -54,7 +54,7 @@
 				<Texture value="textures/fire.png"/>
 			</Textures>
 			<Stats>
-				<Lifespan value = "10"/>
+				<Lifespan value = "4"/>
 			</Stats>
 			<Animations>
 				<Animation rows = "4" columns = "8"/>
@@ -70,7 +70,7 @@
 				<Texture value="textures/smoke.png"/>
 			</Textures>
 			<Stats>
-				<Lifespan value = "10"/>
+				<Lifespan value = "4"/>
 			</Stats>
 			<Animations>
 				<Animation rows = "5" columns = "6"/>

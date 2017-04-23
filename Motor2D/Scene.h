@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "ParticleSystem.h"
 struct SDL_Texture;
+using namespace std;
 
 class Scene : public Module
 {

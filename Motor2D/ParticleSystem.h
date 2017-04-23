@@ -79,12 +79,12 @@ public:
 
 class StaticBucle : public Particle {
 public:
-	StaticBucle(const char * path, pair<float, float> startingposition, int, int ,int, int);
+	StaticBucle(const char * path, pair<float, float> startingposition, int, int ,int, int, bool);
 	SDL_Texture* texture;
 	Animation anim;
 
 	Timer timer;
-
+	bool finite = false;
 	void Update();
 	void Draw();
 	bool IsAlive();
@@ -110,7 +110,7 @@ public:
 	bool CleanUp();
 
 	Particle* CreateBall(pair<float,float> startingposition, pair<float,float> startingforce, bool gravity);
-	Particle* CreateStaticBucle(pair<float, float> startingposition, ParticleType type);
+	Particle* CreateStaticBucle(pair<float, float> startingposition, bool finite, ParticleType type);
 	Particle* CreateExplosion(pair<float, float> startingposition);
 	bool DestroyParticle(Particle* curr);
 

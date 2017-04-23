@@ -84,10 +84,10 @@ Particle * ParticleSystem::CreateBall(pair<float, float> startingposition, pair<
 	return ret;
 }
 
-Particle * ParticleSystem::CreateStaticBucle(pair<float, float> startingposition, ParticleType type)
+Particle * ParticleSystem::CreateStaticBucle(pair<float, float> startingposition, bool finite, ParticleType type)
 {
 	Particle* ret;
-	ret = new StaticBucle(info[type].path.c_str(), startingposition, info[type].w, info[type].h, info[type].rows, info[type].columns);
+	ret = new StaticBucle(info[type].path.c_str(), startingposition, info[type].w, info[type].h, info[type].rows, info[type].columns, finite);
 	ret->type = (ParticleType)info[type].id;
 	ret->name = info[type].name;
 	ret->lifetime = info[type].lifespan;
@@ -156,7 +156,7 @@ void Ball::CleanUp() {
 // NOTE: Static bucles include all particles that stay in place 
 // for an indefinite amount of time repeating (often) the same animation.
 
-StaticBucle::StaticBucle(const char * path, pair<float, float> startingposition, int w, int h, int rows, int columns)
+StaticBucle::StaticBucle(const char * path, pair<float, float> startingposition, int w, int h, int rows, int columns, bool argfinite)
 {
 	pos = startingposition;
 	texture = App->tex->Load(path);
@@ -172,6 +172,7 @@ StaticBucle::StaticBucle(const char * path, pair<float, float> startingposition,
 	}
 	anim.loop = true;
 	anim.speed = 0.2f;
+	finite = argfinite;
 	timer.Start();
 }
 
@@ -191,7 +192,18 @@ void StaticBucle::Draw()
 
 bool StaticBucle::IsAlive()
 {
-	return true;
+	bool ret = true;
+	if (timer.ReadSec() >= lifetime && finite == true) {
+		ret = false;
+	}
+	else if (pos.first >= App->particlesystem->window_size.first || pos.second >= App->particlesystem->window_size.second)
+	{
+		ret = false;
+	}
+	//
+	//      COLLIDER EFFECT
+	//
+	return ret;
 }
 
 void StaticBucle::CleanUp()

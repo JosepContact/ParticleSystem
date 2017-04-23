@@ -8,6 +8,7 @@
 #include "p2Log.h"
 #include <stdlib.h>
 #include <time.h>
+
 Scene::Scene() : Module()
 {
 	name = "scene";
@@ -29,17 +30,17 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-	pair<float, float> position(666, 0);
+	pair<float, float> position(1100, 0);
 	pair<float, float> force (0, 0);
 	pos = position;
 	forc = force;
 	example = (Ball*)App->particlesystem->CreateBall(position, force, true);
 	position.first = 100;
 	position.second = 300;
-	StaticBucle* fire = (StaticBucle*)App->particlesystem->CreateStaticBucle(position, FIRE);
+	StaticBucle* fire = (StaticBucle*)App->particlesystem->CreateStaticBucle(position, false, FIRE);
 	position.first = 200;
 	position.second = 150;
-	StaticBucle* smoke = (StaticBucle*)App->particlesystem->CreateStaticBucle(position, SMOKE);
+	StaticBucle* smoke = (StaticBucle*)App->particlesystem->CreateStaticBucle(position, true, SMOKE);
 	return true;
 }
 
@@ -52,11 +53,17 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+	/*
+	srand(time(NULL));
+	forc.first = ((float)(rand() % 20000 + 1) / 1000);
+	bool negative = rand() % 2;
+	if (negative) forc.first *= -1;
+	float dick = forc.first;
+
+	forc.second = ((float)(rand() % 20000 + 1) / 1000);
+	float dick2 = forc.second;
+	*/
 	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
-	/*	srand(time(NULL));
-		forc.first = ((float)(rand() % 400 + 1)) / (float) 100;
-		bool negative = rand() % 2;
-		if (negative) forc.first *= -1;*/
 		example = (Ball*)App->particlesystem->CreateBall(pos, forc, true);
 	}
 
