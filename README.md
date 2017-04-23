@@ -1,4 +1,4 @@
-﻿## Introduction to a ParticleSystem
+## Introduction to a ParticleSystem
 
 Intro here.
 
