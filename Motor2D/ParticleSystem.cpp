@@ -203,7 +203,7 @@ void MovableParticle::Update() {
 	alive = IsAlive();
 }
 
-void MovableParticle::Draw() {
+void MovableParticle::Draw(){
 	App->render->Blit(texture, pos.first, pos.second, &anim.GetCurrentFrame());
 }
 

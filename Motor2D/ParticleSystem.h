@@ -53,20 +53,19 @@ public:
 	string name;
 	Collider* collider;
 	Animation anim;
-
+	Timer timer;
 
 	virtual void Update() {};
 	virtual void Draw() {};
 	virtual void CleanUp() {};
 	virtual bool IsAlive() { return true; };
-
 };
 
 class MovableParticle : public Particle {
 public:
 	MovableParticle(bool gravity, const char* path, pair<float, float> startingforce, pair<float, float> startingposition, int w, int h, int rows, int columns);
 
-	Timer timer;
+	
 
 	pair<float, float> spd;
 	pair<float, float> force;
@@ -75,15 +74,13 @@ public:
 
 	void Update();
 	void Draw();
-	bool IsAlive();
+	bool IsAlive() ;
 	void CleanUp();
 };
 
 class StaticBucle : public Particle {
 public:
 	StaticBucle(const char * path, pair<float, float> startingposition, int, int ,int, int, bool);
-
-	Timer timer;
 
 	bool finite = false;
 
