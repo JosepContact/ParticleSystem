@@ -13,8 +13,8 @@
 using namespace std;
 
 #define GRAVITY 10
-#define MAX_PARTICLES 100
-#define EMITTER_SPEED 0.04
+#define MAX_PARTICLES 50
+#define EMITTER_SPEED 0.05
 
 struct SDL_Texture;
 class Collider;
@@ -52,6 +52,8 @@ public:
 	SDL_Texture* texture;
 	string name;
 	Collider* collider;
+	Animation anim;
+
 
 	virtual void Update() {};
 	virtual void Draw() {};
@@ -62,7 +64,7 @@ public:
 
 class MovableParticle : public Particle {
 public:
-	MovableParticle(bool gravity, const char * path, pair<float, float> startingposition, pair<float, float> startingforce);
+	MovableParticle(bool gravity, const char* path, pair<float, float> startingforce, pair<float, float> startingposition, int w, int h, int rows, int columns);
 
 	Timer timer;
 
@@ -83,7 +85,6 @@ public:
 
 	Timer timer;
 
-	Animation anim;
 	bool finite = false;
 
 	void Update();
@@ -95,8 +96,6 @@ public:
 class StaticFinite : public Particle {
 public:
 	StaticFinite(const char * path, pair<float, float> startingposition, int, int, int, int);
-
-	Animation anim;
 
 	void Update();
 	void Draw();
@@ -163,6 +162,7 @@ private:
 	vector<Info> info;
 public:
 	pair<uint, uint> window_size;
+	Timer update;
 };
 
 #endif

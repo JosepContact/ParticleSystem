@@ -33,7 +33,7 @@
 			<Info>
 				<Name value= "BALL"/>
 				<ID value = "0"/>
-				<Collider w="" h=""/>
+				<Collider w="64" h="64"/>
 			</Info>
 			<Textures>
 				<Texture value="textures/ball.png"/>
@@ -42,13 +42,14 @@
 				<Lifespan value = "3"/>
 			</Stats>
 			<Animations>
+				<Animation rows = "1" columns = "1"/>
 			</Animations>
 		</particle>
 		<particle>
 			<Info>
 				<Name value= "STAR"/>
 				<ID value = "1"/>
-				<Collider w="" h=""/>
+				<Collider w="31" h="33"/>
 			</Info>
 			<Textures>
 				<Texture value="textures/star.png"/>
@@ -57,6 +58,7 @@
 				<Lifespan value = "2"/>
 			</Stats>
 			<Animations>
+				<Animation rows = "1" columns = "1"/>
 			</Animations>
 		</particle>
 		<particle>
@@ -101,7 +103,7 @@
 				<Texture value="textures/explosion.png"/>
 			</Textures>
 			<Stats>
-				<Lifespan value = ""/>
+				<Lifespan value = "3"/>
 			</Stats>
 			<Animations>
 				<Animation rows = "5" columns = "5"/>

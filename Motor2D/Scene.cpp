@@ -50,7 +50,7 @@ bool Scene::Start()
 	pair<float, float> mousepos(x, y);
 
 	// SPAWNS A PINK STAR EMITTER
-	emitter = App->particlesystem->CreateEmitter(mousepos, false, 10, STAR);
+	emitter = App->particlesystem->CreateEmitter(mousepos, false, 10, FIRE);
 	pair<float, float> pos(600, 200);
 
 	

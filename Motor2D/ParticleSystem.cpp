@@ -48,14 +48,18 @@ bool ParticleSystem::Start()
 
 bool ParticleSystem::Update(float dt)
 {
+	update.Start();
 	for (list<Particle*>::iterator it = particles.begin(); it != particles.end(); ++it)
 	{
 		it._Ptr->_Myval->Update();
 	}
+	LOG("Particles: %.10f", update.ReadSec());
+	update.Start();
 	for (list<Emitter*>::iterator it = emitters.begin(); it != emitters.end(); ++it)
 	{
 		it._Ptr->_Myval->Update(dt);
 	}
+	LOG("Emitter: %.10f", update.ReadSec());
 	return true;
 }
 
@@ -85,7 +89,7 @@ Particle * ParticleSystem::CreateMovableParticle(pair<float, float> startingposi
 	Particle* ret = nullptr;
 	if (particles.size() < MAX_PARTICLES)
 	{
-		ret = new MovableParticle(gravity, info[type].path.c_str(), startingforce, startingposition);
+		ret = new MovableParticle(gravity, info[type].path.c_str(), startingforce, startingposition, info[type].w, info[type].h, info[type].rows, info[type].columns);
 		ret->type = (ParticleType)info[type].id;
 		ret->name = info[type].name;
 		ret->lifetime = info[type].lifespan;
@@ -162,11 +166,23 @@ bool ParticleSystem::DestroyParticle(Particle * curr)
 // 2. Notice the code introduces a lifetime to all particles automatically,
 // this can be removed, although I don't recommend it.
 
-MovableParticle::MovableParticle(bool gravity, const char* path, pair<float, float> startingforce, pair<float, float> startingposition)
+MovableParticle::MovableParticle(bool gravity, const char* path, pair<float, float> startingforce, pair<float, float> startingposition, int w, int h, int rows, int columns)
 {
 	spd = startingforce;
 	pos = startingposition;
 	this->gravity = gravity;
+	SDL_Rect our_rect{ 0,0,w,h };
+
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < columns; j++) {
+			our_rect.x = j* w;
+			our_rect.y = i* h;
+			anim.PushBack(our_rect);
+		}
+		our_rect.x = 0;
+	}
+	anim.loop = true;
+	anim.speed = 0.2f;
 	// Deactivate gravity on moving particles by sending 'false' on creation
 	texture = App->tex->Load(path);
 	timer.Start();
@@ -188,7 +204,7 @@ void MovableParticle::Update() {
 }
 
 void MovableParticle::Draw() {
-	App->render->Blit(texture, pos.first, pos.second);
+	App->render->Blit(texture, pos.first, pos.second, &anim.GetCurrentFrame());
 }
 
 bool MovableParticle::IsAlive() {
@@ -361,7 +377,7 @@ void Emitter::Update(float dt)
 		if (negative) force.second *= -1;
 		force.second += speed_orig.second;
 		//
-		App->particlesystem->CreateMovableParticle(pos, force, true, STAR);
+		App->particlesystem->CreateMovableParticle(pos, force, true, type);
 		speed = 0;
 	}
 	alive = IsAlive();
