@@ -1,17 +1,48 @@
 ## What is a 2D particle system? 
 A **particle system** is a method used in computer graphics that uses small sprites (in 2D) to simulate small portions of a fluid or amorphous entities. The illusion of all the particles together creates a vision of a real entity (some examples: fire, clouds, exmplosions, electricity, 'magic', etc.). We use particle systems to create and organise large amounts of these particles.
 
+## How do we achieve it?
+1. First of all, we need to think about the particles, and how they behave. Particles need to be created and deleted automatically so the system doesn't collapse. Also, they need a starting speed for them, ideally it will be a randomised speed (between fixed parameters) to achieve that special *flashy* effect. It is interesting that particles can change over time as well, for example: change colors, sizes, shapes... But after all, they are just **sprites** that we can treat as animations.
+
 ## What is a 2D particle system? 
 A **particle system** is a method used in computer graphics that uses small sprites (in 2D) to simulate small portions of a fluid or amorphous entities. The illusion of all the particles together creates a vision of a real entity (some examples: fire, clouds, exmplosions, electricity, 'magic', etc.). We use particle systems to create and organise large amounts of these particles.
 
 ## How do we achieve it?
-1. First of all, we need to think about particles, and how they behave. Particles need to be created and deleted automatically so the system doesn't collapse. Also, they need a starting speed for them, ideally it will be a randomised speed (between fixed parameters) to achieve that special *flashy* effect. It is interesting that particles can also change over time, for example: change colors, sizes, shapes... But after all, they are just ***sprites** that we can treat as animations.
-
-First af all, we know that particles will be created and deleted left and right all the time. To solvent that, particles have a 'lifetime' value that 
+Let's do a general approach before jumping to code.
+1. First of all, we need to think about the particles, and how they behave. Particles need to be created and deleted automatically so the system doesn't collapse. Also, they need a starting speed for them, ideally it will be a randomised speed (between fixed parameters) to achieve that special *flashy* effect. It is interesting that particles can also change over time, for example: change colors, sizes, shapes... But after all, they are just **sprites** that we can treat as animations.
+2. We have to consider a solid system capable of creating particles on call and store them for proper use. The system must update every particle, and every update should change its properties, render it to screen and check if it is time to be destroyed.
+3. Finally, we need a support class that can create particles and throw them randomly. This element is called *Emitter*.
+4. The particle system should be able to create multiple emitters, and they are also updated from the Particle System.
+It is important that you keep in mind that particles can be completely different from each other, in the future you should be able to decide how your particle is going to act. As an introduction, I will bring you static and non static particles.
 
 ### The Class Particle
+The class particle holds all general information and methods that other particles will inherit
+- As I have mentioned before the particles are deleted automatically, for that we need a variable that stores its lifetime and a timer[1].
+- They also need a position. I used a *pair* of type *float*.
+- A texture.
+- An Animation[2].
+- OPTIONAL: The name of the particle and/or an id
+As methods you should add at least a virtual Update.
+```
+class Particle {
+public:
+	pair<float, float> pos;
 
+	int lifetime; // (s)
+	bool alive = true;
 
+	ParticleType type;
+	SDL_Texture* texture;
+	string name;
+	Collider* collider;
+	Animation anim;
+
+	virtual void Update() {};
+	virtual void Draw() {};
+	virtual void CleanUp() {};
+	virtual bool IsAlive() { return true; };
+};
+```
 ### Types of Particles:
 - Static Particles.
 - Movable Particles.
