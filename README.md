@@ -1,5 +1,10 @@
+## What is a 2D particle system? 
+A **particle system** is a method used in computer graphics that uses small sprites (in 2D) to simulate small portions of a fluid or amorphous entities. The illusion of all the particles together creates a vision of a real entity (some examples: fire, clouds, exmplosions, electricity, 'magic', etc.). We use particle systems to create and organise large amounts of these particles.
 
 ## How do we achieve it?
+1. First of all, we need to think about particles, and how they behave. Particles need to be created and deleted automatically so the system doesn't collapse. Also, they need a starting speed for them, ideally it will be a randomised speed (between fixed parameters) to achieve that special *flashy* effect. It is interesting that particles can also change over time, for example: change colors, sizes, shapes... But after all, they are just ***sprites** that we can treat as animations.
+
+First af all, we know that particles will be created and deleted left and right all the time. To solvent that, particles have a 'lifetime' value that 
 
 ### The Class Particle
 
