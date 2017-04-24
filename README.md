@@ -20,7 +20,7 @@ The class particle holds all general information and methods that other particle
 
 As methods you should add at least a virtual Update.
 ```
-class Particle {
+`class Particle {
 public:
 	pair<float, float> pos;
 
@@ -37,72 +37,73 @@ public:
 	virtual void Update() {};
 	virtual void Draw() const{};
 	virtual bool IsAlive() { return true; };
-};
+};`
 ```
+On the particle's Update():
+	- Update its postion.
+	- Render it to screen.
+	- Check if it is still alive.
+	
 ### Static Particles:
 Particles that stay in place for an indefinite amount of time repeating (often) the same animation.
 These particles can be useful when a travelling emitter continuosly drops particles a player can pick up.
 ```
-class StaticParticle: public Particle {
+`class StaticParticle: public Particle {
 public:
 	bool finite;
 
 	void Update(); void Draw(); bool IsAlive();
-};
+};`
 ```
 I suggest it holds a boolean just in case you do not want a finite lifetime for it.
 
 ### Non Static or Movable Particles:
 Particles that follow 'physics' laws and respond to speed and forces.
 ```
-class MovableParticle: public Particle {
+`class MovableParticle: public Particle {
 public:
 	pair<float, float> spd;
 	pair<float, float> force;
 	bool gravity = false; // OPTIONAL
 
 
-	void Update();
-	void Draw();
-	bool IsAlive() ;
-	void CleanUp();
-};
+	void Update(); void Draw(); bool IsAlive();
+};`
 ```
 
 ### Setting up a Particle Manager.
+The ParticleManager is in charge of all your particles. It creates them, updates them and destroys them. Like a god to its creations. Something like this:
+```
+`class ParticleManager {
+public:
+	ParticleManager();
+	virtual ~ParticleManager();
+	
+	bool Update(float dt); 
+	bool CleanUp();
 
+	Particle* CreateMovableParticle(pair<float,float> startingposition, pair<float,float> startingspeed, bool gravity, ParticleType type);
+	Particle* CreateStaticParticle(pair<float, float> startingposition, bool finite, ParticleType type);
+	bool DestroyParticle(Particle* particle);
 
+private:
+	list<Particle*> particles;
+};`
+```
+It holds a list or vector with all the particles you have. This is what you will be using to call all the updates of the particles inside your Particle Manager update. And also to destroy them all when you leave the program in CleanUp.
 ### Some tips before starting...
+- I used an XML document to load different information for each type of particle. Make sure you check it.
+- Think of different kinds of particles you want. My movable particles only have linear movement, but maybe you want them describe a circle on your screen.
+### NOTES:
+[1] **The Timer** is already in the code.
+[2] **The Animation** is also in there.
 
 ### Let's practise.
 
 
 Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
-```markdown
-Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
 
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
 
 [Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/JosepUPC/ParticleSystem/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
