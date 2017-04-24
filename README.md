@@ -74,7 +74,7 @@ public:
 ### Setting up a Particle Manager.
 The ParticleManager is in charge of all your particles. It creates them, updates them and destroys them. Like a god to its creations. Something like this:
 
-`class ParticleManager {
+```class ParticleManager {
 public:
 	ParticleManager();
 	virtual ~ParticleManager();
@@ -88,14 +88,15 @@ public:
 
 private:
 	list<Particle*> particles;
-};`
+};```
 
-It holds a list or vector with all the particles you have. This is what you will be using to call all the updates of the particles inside your Particle Manager update. And also to destroy them all when you leave the program in CleanUp.
+It holds a list or vector with all the particles you have. This is what you will be using to call all the updates of the particles inside your Particle Manager update, and also to destroy them all when you leave the program in CleanUp.
 ### Some tips before starting...
 - I used an XML document to load different information for each type of particle. Make sure you check it.
 - Think of different kinds of particles you want. My movable particles only have linear movement, but maybe you want them describe a circle on your screen.
 ### NOTES:
 [1] **The Timer** is already in the code.
+
 [2] **The Animation** is also in there.
 
 ### Let's practise.
