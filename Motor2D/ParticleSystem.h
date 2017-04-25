@@ -32,12 +32,13 @@ enum ParticleType {
 struct Info {
 	string name;
 	int id;
-	string path;
 	int lifespan;
-	int w, h, rows, columns;
+	Animation anim;
+	string path;
+	SDL_Texture* texture;
 
-	Info::Info(string argname, int argid, string argpath, int arglifespan, int argw, int argh, int argrows, int argcolumns)
-		: name(argname), id(argid), path(argpath), lifespan(arglifespan), w(argw), h (argh), rows(argrows), columns(argcolumns){}
+	Info::Info(string argname, string argpath, int argid, int arglifespan, Animation arganim)
+		: name(argname), path(argpath), id(argid), lifespan(arglifespan), anim(arganim){}
 };
 
 
@@ -57,14 +58,12 @@ public:
 
 	virtual void Update() {};
 	virtual void Draw() {};
-	virtual void CleanUp() {};
 	virtual bool IsAlive() { return true; };
 };
 
 class MovableParticle : public Particle {
 public:
-	MovableParticle(bool gravity, const char* path, pair<float, float> startingforce, pair<float, float> startingposition, int w, int h, int rows, int columns);
-
+	MovableParticle(bool gravity, pair<float, float> startingforce, pair<float, float> startingposition);
 	
 
 	pair<float, float> spd;
@@ -74,30 +73,18 @@ public:
 
 	void Update();
 	void Draw();
-	bool IsAlive() ;
-	void CleanUp();
+	bool IsAlive();
 };
 
 class StaticBucle : public Particle {
 public:
-	StaticBucle(const char * path, pair<float, float> startingposition, int, int ,int, int, bool);
+	StaticBucle( pair<float, float> startingposition, bool);
 
 	bool finite = false;
 
 	void Update();
 	void Draw();
 	bool IsAlive();
-	void CleanUp();
-};
-
-class StaticFinite : public Particle {
-public:
-	StaticFinite(const char * path, pair<float, float> startingposition, int, int, int, int);
-
-	void Update();
-	void Draw();
-	bool IsAlive();
-	void CleanUp();
 };
 
 
@@ -148,18 +135,19 @@ public:
 
 	Particle* CreateMovableParticle(pair<float,float> startingposition, pair<float,float> startingforce, bool gravity, ParticleType type);
 	Particle* CreateStaticBucle(pair<float, float> startingposition, bool finite, ParticleType type);
-	Particle* CreateStaticFinite(pair<float, float> startingposition, ParticleType type);
 	Emitter* CreateEmitter(pair<float, float> startingposition, bool finite, float duration, ParticleType type);
-	bool DestroyParticle(Particle* curr);
-
 private:
-	list<Particle*> particles;
-	list<Emitter*> emitters;
+	bool DestroyParticle(Particle* curr);
+	bool DestroyEmitter(Emitter * curr);
 
-	vector<Info> info;
+
 public:
 	pair<uint, uint> window_size;
 	Timer update;
+private:
+	list<Particle*> particles;
+	list<Emitter*> emitters;
+	vector<Info> info;
 };
 
 #endif

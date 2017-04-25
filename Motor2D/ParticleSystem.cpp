@@ -33,7 +33,20 @@ bool ParticleSystem::Awake(pugi::xml_node &config )
 		int rows = node.child("Animations").child("Animation").attribute("rows").as_int();
 		int columns = node.child("Animations").child("Animation").attribute("columns").as_int();
 		// -----------------------------
-		Info curr(name, id, path, lifespan, w, h, rows, columns);
+		SDL_Rect our_rect{0,0,w,h};
+		Animation anim;
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < columns; j++) {
+				our_rect.x = j* w;
+				our_rect.y = i* h;
+				anim.PushBack(our_rect);
+			}
+			our_rect.x = 0;
+		}
+		anim.loop = true;
+		anim.speed = 0.2f;
+
+		Info curr(name, path, id, lifespan, anim);
 		info.push_back(curr);
 	}
 	return true;
@@ -43,6 +56,11 @@ bool ParticleSystem::Start()
 {
 	srand(time(NULL));
 	App->win->GetWindowSize(window_size.first, window_size.second);
+
+	for (uint i = 0; i < info.size(); ++i) {
+		info[i].texture = App->tex->Load(info[i].path.c_str());
+	}
+
 	return true;
 }
 
@@ -80,6 +98,17 @@ bool ParticleSystem::CleanUp()
 		if (it._Ptr->_Myval != nullptr)
 			DestroyParticle(it._Ptr->_Myval);
 	}
+
+	for (list<Emitter*>::iterator it = emitters.begin(); it != emitters.end(); ++it)
+	{
+		if (it._Ptr->_Myval != nullptr)
+			DestroyEmitter(it._Ptr->_Myval);
+	}
+
+	for (uint i = 0; i < info.size(); ++i) {
+		App->tex->UnLoad(info[i].texture);
+	}
+
 	particles.clear();
 	return true;
 }
@@ -89,7 +118,9 @@ Particle * ParticleSystem::CreateMovableParticle(pair<float, float> startingposi
 	Particle* ret = nullptr;
 	if (particles.size() < MAX_PARTICLES)
 	{
-		ret = new MovableParticle(gravity, info[type].path.c_str(), startingforce, startingposition, info[type].w, info[type].h, info[type].rows, info[type].columns);
+		ret = new MovableParticle(gravity, startingforce, startingposition);
+		ret->texture = info[type].texture;
+		ret->anim = info[type].anim;
 		ret->type = (ParticleType)info[type].id;
 		ret->name = info[type].name;
 		ret->lifetime = info[type].lifespan;
@@ -106,24 +137,9 @@ Particle * ParticleSystem::CreateStaticBucle(pair<float, float> startingposition
 	Particle* ret = nullptr;
 	if (particles.size() < MAX_PARTICLES)
 	{
-		ret = new StaticBucle(info[type].path.c_str(), startingposition, info[type].w, info[type].h, info[type].rows, info[type].columns, finite);
-		ret->type = (ParticleType)info[type].id;
-		ret->name = info[type].name;
-		ret->lifetime = info[type].lifespan;
-		particles.push_back(ret);
-	}
-	else {
-		LOG("Maximum particles achieved.");
-	}
-	return ret;
-}
-
-Particle * ParticleSystem::CreateStaticFinite(pair<float, float> startingposition, ParticleType type)
-{
-	Particle* ret = nullptr;
-	if (particles.size() < MAX_PARTICLES)
-	{
-		ret = new StaticFinite(info[type].path.c_str(), startingposition, info[type].w, info[type].h, info[type].rows, info[type].columns);
+		ret = new StaticBucle(startingposition, finite);
+		ret->texture = info[type].texture;
+		ret->anim = info[type].anim;
 		ret->type = (ParticleType)info[type].id;
 		ret->name = info[type].name;
 		ret->lifetime = info[type].lifespan;
@@ -149,8 +165,19 @@ bool ParticleSystem::DestroyParticle(Particle * curr)
 	bool ret = true;
 	if (curr != nullptr) {
 		particles.remove(curr);
-		curr->CleanUp();
+		//curr->CleanUp();
 		delete curr;	
+	}
+	else ret = false;
+	return ret;
+}
+
+bool ParticleSystem::DestroyEmitter(Emitter * curr)
+{
+	bool ret = true;
+	if (curr != nullptr) {
+		emitters.remove(curr);
+		delete curr;
 	}
 	else ret = false;
 	return ret;
@@ -166,25 +193,12 @@ bool ParticleSystem::DestroyParticle(Particle * curr)
 // 2. Notice the code introduces a lifetime to all particles automatically,
 // this can be removed, although I don't recommend it.
 
-MovableParticle::MovableParticle(bool gravity, const char* path, pair<float, float> startingforce, pair<float, float> startingposition, int w, int h, int rows, int columns)
+MovableParticle::MovableParticle(bool gravity,pair<float, float> startingforce, pair<float, float> startingposition)
 {
 	spd = startingforce;
 	pos = startingposition;
 	this->gravity = gravity;
-	SDL_Rect our_rect{ 0,0,w,h };
-
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < columns; j++) {
-			our_rect.x = j* w;
-			our_rect.y = i* h;
-			anim.PushBack(our_rect);
-		}
-		our_rect.x = 0;
-	}
-	anim.loop = true;
-	anim.speed = 0.2f;
 	// Deactivate gravity on moving particles by sending 'false' on creation
-	texture = App->tex->Load(path);
 	timer.Start();
 }
 
@@ -219,10 +233,6 @@ bool MovableParticle::IsAlive() {
 	return ret;
 }
 
-void MovableParticle::CleanUp() {
-	App->tex->UnLoad(texture);
-}
-
 // -----------------------
 //     STATIC BUCLES
 // -----------------------
@@ -236,23 +246,11 @@ void MovableParticle::CleanUp() {
 //
 // NOTICE that non finite particles that leave the screen are deleted, is that what your game needs?
 
-StaticBucle::StaticBucle(const char * path, pair<float, float> startingposition, int w, int h, int rows, int columns, bool argfinite)
+StaticBucle::StaticBucle(pair<float, float> startingposition,  bool argfinite)
 {
 	pos = startingposition;
-	texture = App->tex->Load(path);
-	SDL_Rect our_rect{0,0,w,h};
-
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < columns; j++) {
-			our_rect.x = j* w ;
-			our_rect.y = i* h;
-			anim.PushBack(our_rect);
-		}
-		our_rect.x = 0;
-	}
-	anim.loop = true;
-	anim.speed = 0.2f;
 	finite = argfinite;
+	anim.loop = false;
 	timer.Start();
 }
 
@@ -279,69 +277,6 @@ bool StaticBucle::IsAlive()
 	}
 	return ret;
 }
-
-void StaticBucle::CleanUp()
-{
-	App->tex->UnLoad(texture);
-}
-
-
-// -----------------------
-//     FINITE BUCLES
-// -----------------------
-// Particles that stay in place for a fixed amount of time
-// due to its animation.
-// 1. This code deletes the particle after its animation is over.
-//
-// NOTICE that particles that leave the screen are deleted, is that what your game needs?
-
-StaticFinite::StaticFinite(const char * path, pair<float, float> startingposition, int w, int h, int rows, int columns)
-{
-	pos = startingposition;
-	texture = App->tex->Load(path);
-	SDL_Rect our_rect{ 0,0,w,h };
-
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < columns; j++) {
-			our_rect.x = j* w;
-			our_rect.y = i* h;
-			anim.PushBack(our_rect);
-		}
-		our_rect.x = 0;
-	}
-	anim.loop = false;
-	anim.speed = 0.2f;
-}
-
-void StaticFinite::Update()
-{
-	Draw();
-	alive = IsAlive();
-}
-
-void StaticFinite::Draw()
-{
-	App->render->Blit(texture, pos.first, pos.second, &anim.GetCurrentFrame());
-}
-
-bool StaticFinite::IsAlive()
-{
-	bool ret = true;
-	if (pos.first >= App->particlesystem->window_size.first || pos.second >= App->particlesystem->window_size.second)
-	{
-		ret = false;
-	}
-	else if (anim.Finished()) {
-		ret = false;
-	}
-	return ret;
-}
-
-void StaticFinite::CleanUp()
-{
-	App->tex->UnLoad(texture);
-}
-
 // -----------------------
 //     EMITTER
 // -----------------------

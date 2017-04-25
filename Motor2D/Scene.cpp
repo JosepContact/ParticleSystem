@@ -50,10 +50,8 @@ bool Scene::Start()
 	pair<float, float> mousepos(x, y);
 
 	// SPAWNS A PINK STAR EMITTER
-	emitter = App->particlesystem->CreateEmitter(mousepos, false, 10, FIRE);
+	emitter = App->particlesystem->CreateEmitter(mousepos, false, 10, STAR);
 	pair<float, float> pos(600, 200);
-
-	
 
 	return true;
 }
@@ -84,7 +82,8 @@ bool Scene::Update(float dt)
 
 	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN) {
 		// SPAWNS A FIRE EXPLOSION
-		StaticFinite* bomb = (StaticFinite*)App->particlesystem->CreateStaticFinite(pos, EXPLOSION);
+		StaticBucle* bomb = (StaticBucle*)App->particlesystem->CreateStaticBucle(pos, true, EXPLOSION);
+		bomb->anim.loop = false;
 	}
 
 	return true;
