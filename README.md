@@ -168,18 +168,21 @@ void Emitter::Update(float dt)
 }
 ```
 - TODO 7: Fill IsAlive() method.
+
 Well, you might want to add a lifetime to emitters too.
 
 - TODO 8: Create an Emitter.
+
 Just call the function and see particles jumping everywhere. You can activate and deactivate gravity since the movable particles accept that option.
 
 ![Image](http://i.imgur.com/qfvqZBL.png)
 - TODO 9: Set a frequency or your players will become crazy.
+
 You must not create a new particle on every update, you could possibly create more particles than the ones being deleted. That would make your game unstable on time.
 
 [Download the exercises here](https://github.com/JosepUPC/ParticleSystem/releases/download/v1.1/Exercises.-.Particle.System.zip)
 
-[Download a final view of a functional system] (https://github.com/JosepUPC/ParticleSystem/releases/download/v1.0/ParticleSystem.zip)
+[Download a final view] (https://github.com/JosepUPC/ParticleSystem/releases/download/v1.0/ParticleSystem.zip)
 
 For full finished code, [check the github repository](https://github.com/JosepUPC/ParticleSystem)
 
