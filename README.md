@@ -103,7 +103,8 @@ public:
 ### Setting up a Particle Manager.
 The ParticleManager is in charge of all your particles. It creates them, updates them and destroys them. Like a god to its creations. Something like this:
 
-```class ParticleManager {
+```
+class ParticleManager {
 public:
 	ParticleManager();
 	virtual ~ParticleManager();
@@ -116,7 +117,8 @@ public:
 
 private:
 	list<Particle*> particles;
-};```
+};
+```
 
 It holds a list or vector with all the particles you have. This is what you will be using to call all the updates of the particles inside your Particle Manager update, and also to destroy them all when you leave the program in CleanUp.
 ### Some tips before starting...
@@ -180,7 +182,4 @@ You must not create a new particle on every update, you could possibly create mo
 [Download a final view of a functional system] (https://github.com/JosepUPC/ParticleSystem/releases/download/v1.0/ParticleSystem.zip)
 
 For full finished code, [check the github repository](https://github.com/JosepUPC/ParticleSystem)
-
-[My Github](https://github.com/JosepUPC)
-
 
