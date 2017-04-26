@@ -1,6 +1,11 @@
 ## What is a 2D particle system? 
-A **particle system** is a method used in computer graphics that uses small sprites (in 2D) to simulate small portions of a fluid or amorphous entities. The illusion of all the particles together creates a vision of a real entity (some examples: fire, clouds, exmplosions, electricity, 'magic', etc.). We use particle systems to create and organise large amounts of these particles.
-
+A **particle system** is a method used in computer graphics that uses small sprites (in 2D) to simulate small portions of a fluid or amorphous entities. The illusion of all the particles together creates a vision of a real entity (some examples: fire, clouds, exmplosions, electricity, 'magic', etc.). We use particle systems to create and organise large amounts of these particles automatically.
+![Image](https://cdn.tutsplus.com/gamedev/uploads/2013/08/XNA_Geometry_Wars_Particle_Effects_400px.jpg)
+## The 'particle' concept
+Particles are individually all the same, but together they create several types of effects. By changing their sprites we can create infinite amount of effects, and by changing their patterns we can create different approaches that may be more convinient for our concept. Some examples:
+![Image](http://www.gamingtruth.com/wp-content/uploads/2010/10/ss_429486678c380ae3e4ea6040e30a920b0095a4ce.600x338.jpg)
+We can see here the explosion is consistent. The outter particles are less noticable, but the smoke spawns randomly, in a short amount of time and in the same area. In the following example we see a similar example:
+![Image](http://media.indiedb.com/images/games/1/24/23133/Explosion.jpg) 
 ## How do we achieve it?
 Let's do a general approach before jumping to code.
 1. First of all, we need to think about the particles, and how they behave. Particles need to be created and deleted automatically so the system doesn't collapse. Also, they need a starting speed for them, ideally it will be a randomised speed (between fixed parameters) to achieve that special *flashy* effect. It is interesting that particles can also change over time, for example: change colors, sizes, shapes... But after all, they are just **sprites** that we can treat as animations.
@@ -60,7 +65,7 @@ I suggest it holds a boolean just in case you do not want a finite lifetime for 
 ### Non Static or Movable Particles:
 Particles that follow 'physics' laws and respond to speed and forces.
 ```
-`class MovableParticle: public Particle {
+class MovableParticle: public Particle {
 public:
 	pair<float, float> spd;
 	pair<float, float> force;
@@ -68,7 +73,7 @@ public:
 
 
 	void Update(); void Draw(); bool IsAlive();
-};`
+};
 ```
 
 ### Setting up a Particle Manager.
@@ -80,7 +85,6 @@ public:
 	virtual ~ParticleManager();
 	
 	bool Update(float dt); 
-	bool CleanUp();
 
 	Particle* CreateMovableParticle(pair<float,float> startingposition, pair<float,float> startingspeed, bool gravity, ParticleType type);
 	Particle* CreateStaticParticle(pair<float, float> startingposition, bool finite, ParticleType type);
@@ -100,6 +104,8 @@ It holds a list or vector with all the particles you have. This is what you will
 [2] **The Animation** is also in there.
 
 ### Let's practise.
+
+
 
 
 Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
