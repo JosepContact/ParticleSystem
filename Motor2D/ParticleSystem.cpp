@@ -226,7 +226,7 @@ bool MovableParticle::IsAlive() {
 	if (timer.ReadSec() >= lifetime) {
 		ret = false;
 	}
-	else if (pos.first >= App->particlesystem->window_size.first || pos.second >= App->particlesystem->window_size.second)
+	else if (pos.first >= App->particlesystem->window_size.first || pos.second >= App->particlesystem->window_size.second || pos.first < 0 || pos.second < 0)
 	{
 		ret = false;
 	}
@@ -271,7 +271,7 @@ bool StaticBucle::IsAlive()
 	if (timer.ReadSec() >= lifetime && finite == true) {
 		ret = false;
 	}
-	else if (pos.first >= App->particlesystem->window_size.first || pos.second >= App->particlesystem->window_size.second)
+	else if (pos.first >= App->particlesystem->window_size.first || pos.second >= App->particlesystem->window_size.second || pos.first < 0 || pos.second < 0)
 	{
 		ret = false;
 	}

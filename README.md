@@ -182,7 +182,7 @@ You must not create a new particle on every update, you could possibly create mo
 
 [Download the exercises here](https://github.com/JosepUPC/ParticleSystem/releases/download/v1.1/Exercises.-.Particle.System.zip)
 
-[Download a final view] (https://github.com/JosepUPC/ParticleSystem/releases/download/v1.0/ParticleSystem.zip)
+[Download a final view](https://github.com/JosepUPC/ParticleSystem/releases/download/v1.0/ParticleSystem.zip)
 
 For full finished code, [check the github repository](https://github.com/JosepUPC/ParticleSystem)
 
@@ -191,6 +191,9 @@ Contact me at josepcontact@gmail.com
 ## Interesting websites
 
 [Bartek's coding blog](http://www.bfilipek.com/2014/04/flexible-particle-system-start.html)
+
 [Particles System by Itay Sagui](https://www.codeproject.com/Articles/10003/A-basic-Particles-System)
+
 [2D Particle Engines](http://rbwhitaker.wikidot.com/2d-particle-engine-1)
+
 
