@@ -15,11 +15,11 @@ We can see here the explosion is consistent. The outter particles are less notic
 
 Particles are not always spread around from one point, they can also be spread in within one angle. What will happen with the smoke if we spin the ship?
 
-![Image]https://i.ytimg.com/vi/8lyiEytbvd0/hqdefault.jpg
+![Image](https://i.ytimg.com/vi/8lyiEytbvd0/hqdefault.jpg)
 
 Here, the bullets are particles shot from the spaceship on a linear trajectory. As you may have guessed, particles can interact with the player or the environment too.
 
-![Image]http://i.imgur.com/ujnnrwg.jpg
+![Image](http://i.imgur.com/ujnnrwg.jpg)
 
 Particles will be as complex as you want them to be. I will be explaining the basic concept of a Particle System, its general structure and a couple of general particles. But keep in mind that you might need dozens of these elements, you might have to create some new ones yourself.
 
