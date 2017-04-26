@@ -3,11 +3,13 @@ A **particle system** is a method used in computer graphics that uses small spri
 
 ![Image](https://cdn.tutsplus.com/gamedev/uploads/2013/08/XNA_Geometry_Wars_Particle_Effects_400px.jpg)
 
-## Particles in 2D videogames.
+### Particles in 2D videogames.
 Particles have been used in video games for long. Very early video games in the 1960s already used 2D pixel clouds to simulate explosions, like _Spacewar!_ in 1962.
-In the 1978 video game, _Asteroid_, the ships could explode into thin lines. 
+In the 1978 video game, _Asteroid_, the ships could also explode into thin lines. 
 
 ![Image](http://core0.staticworld.net/images/idge/imported/article/jvw/2006/05/jw-0529-funandgames1-100156062-orig.gif)
+
+Nowadays, particles are fundamental in all 2D video games. Every game possible uses them in more or less quantity, but they are and will always be needed to visually please players from everywhere. It's a graphical tool meant to fulfill a player's expectations towards an real element inside an artificial environment.
 
 ## The 'particle' concept
 Particles are not strictly points in space, they can have multiple shapes. As individuals they are similar, but together they create complete distinct visuals. By changing their sprites we can create infinite amount of effects, and by changing their patterns we can create different approaches that may be more convinient for our concept. Some examples:
@@ -126,12 +128,39 @@ It holds a list or vector with all the particles you have. This is what you will
 
 ### Let's practise.
 
+- TODO 1: Fill Draw() and IsAlive() methods.
+We are already creating particles with CreateMovableParticle() and CreateStaticParticle(), but we need them to be rendered and eventually deleted.
+
+```
+void Draw(){
+
+}
+
+bool IsAlive() {
+	bool ret = true;
+
+	return ret;
+}
+```
+
+- TODO 2 & 3: Test some particles.
+Just create them in the start of the scene.
+
+- TODO 4 & 5: Set up an emitter.
+You have the class created on the ParticleSystem.h. Treat emitters as Particles, make sure they update and clean up just like them.
+
+- TODO 6: Start shooting particles.
+Here is were the magic happens. Shoot particles with randomised forces, maybe between 1 and 20, and in all four directions.
+
+- TODO 7: Fill IsAlive() method.
+Well, you might want to add a lifetime to emitters too.
+
+- TODO 8: Create an Emitter.
+Just call the function and see particles jumping everywhere. You can activate and deactivate gravity since the movable particles accept that option.
+
+- TODO 9: Set a frequency or your players will become crazy.
+You must not create a new particle on every update, you could possibly create more particles than the ones being deleted. That would make your game unstable on time.
+
+[Download the exercises here](https://github.com/JosepUPC/ParticleSystem/releases/download/v1.1/Exercises.-.Particle.System.zip)
 
 
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-
-
-
-[Link](url) and ![Image](src)
