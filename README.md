@@ -177,4 +177,10 @@ You must not create a new particle on every update, you could possibly create mo
 
 [Download the exercises here](https://github.com/JosepUPC/ParticleSystem/releases/download/v1.1/Exercises.-.Particle.System.zip)
 
+[Download a final view of a functional system] (https://github.com/JosepUPC/ParticleSystem/releases/download/v1.0/ParticleSystem.zip)
+
+For full finished code, [check the github repository](https://github.com/JosepUPC/ParticleSystem)
+
+[My Github](https://github.com/JosepUPC)
+
 
