@@ -1,12 +1,16 @@
 ## What is a 2D particle system? 
-A **particle system** is a method used in computer graphics that uses small sprites (in 2D) to simulate small portions of a fluid or amorphous entities. The illusion of all the particles together creates a vision of a real entity (some examples: fire, clouds, explosions, electricity, 'magic', etc.). We use particle systems to create and organise large amounts of these particles automatically.
+A **particle system** is a method used in computer graphics that uses small sprites (in 2D) to simulate small portions of a fluid or amorphous entities. The illusion of all the particles together creates a vision of a real bigger entity (some examples: fire, clouds, explosions, electricity, 'magic', etc.). We use particle systems to create and organise large amounts of these particles automatically.
 
 ![Image](https://cdn.tutsplus.com/gamedev/uploads/2013/08/XNA_Geometry_Wars_Particle_Effects_400px.jpg)
 
 ## Particles in 2D videogames.
+Particles have been used in video games for long. Very early video games in the 1960s already used 2D pixel clouds to simulate explosions, like _Spacewar!_ in 1962.
+In the 1978 video game, _Asteroid_, the ships could explode into thin lines. 
+
+![Image](http://core0.staticworld.net/images/idge/imported/article/jvw/2006/05/jw-0529-funandgames1-100156062-orig.gif)
 
 ## The 'particle' concept
-Particles are, as individuals, all the same, but together they create complete distinct visuals. By changing their sprites we can create infinite amount of effects, and by changing their patterns we can create different approaches that may be more convinient for our concept. Some examples:
+Particles are not strictly points in space, they can have multiple shapes. As individuals they are similar, but together they create complete distinct visuals. By changing their sprites we can create infinite amount of effects, and by changing their patterns we can create different approaches that may be more convinient for our concept. Some examples:
 ![Image](http://www.gamingtruth.com/wp-content/uploads/2010/10/ss_429486678c380ae3e4ea6040e30a920b0095a4ce.600x338.jpg)
 
 We can see here the explosion is consistent. The outter particles are less noticable, but the smoke spawns randomly, in a short amount of time and in the same area. Here's a similar example:
@@ -21,7 +25,7 @@ Here, the bullets are particles shot from the spaceship on a linear trajectory. 
 
 ![Image](http://i.imgur.com/ujnnrwg.jpg)
 
-Particles will be as complex as you want them to be. I will be explaining the basic concept of a Particle System, its general structure and a couple of general particles. But keep in mind that you might need dozens of these elements, you might have to create some new ones yourself.
+Particles will be as complex as you want them to be. I will be explaining the basic concept of a Particle System, its general structure and a couple of general particles. But keep in mind that you might need dozens of these elements, you might have to create some new ones yourself with different dynamics... Let's say you need to create falling leaves from trees, or a spinning boomerang that can bounce with walls.
 
 ## How do we achieve it?
 Let's do a general approach before jumping to code.
