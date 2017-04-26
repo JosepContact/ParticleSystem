@@ -48,7 +48,7 @@ The class particle holds all general information and methods that other particle
 
 As methods you should add at least a virtual Update.
 ```
-`class Particle {
+class Particle {
 public:
 	pair<float, float> pos;
 
@@ -65,9 +65,10 @@ public:
 	virtual void Update() {};
 	virtual void Draw() const{};
 	virtual bool IsAlive() { return true; };
-};`
+};
 ```
 On the particle's Update():
+
 	- Update its postion.
 	- Render it to screen.
 	- Check if it is still alive.
@@ -76,12 +77,12 @@ On the particle's Update():
 Particles that stay in place for an indefinite amount of time repeating (often) the same animation.
 These particles can be useful when a travelling emitter continuosly drops particles a player can pick up.
 ```
-`class StaticParticle: public Particle {
+class StaticParticle: public Particle {
 public:
 	bool finite;
 
 	void Update(); void Draw(); bool IsAlive();
-};`
+};
 ```
 I suggest it holds a boolean just in case you do not want a finite lifetime for it.
 
@@ -121,6 +122,7 @@ It holds a list or vector with all the particles you have. This is what you will
 ### Some tips before starting...
 - I used an XML document to load different information for each type of particle. Make sure you check it.
 - Think of different kinds of particles you want. My movable particles only have linear movement, but maybe you want them describe a circle on your screen.
+
 ### NOTES:
 [1] **The Timer** is already in the code.
 
@@ -133,12 +135,10 @@ We are already creating particles with CreateMovableParticle() and CreateStaticP
 
 ```
 void Draw(){
-
 }
 
 bool IsAlive() {
 	bool ret = true;
-
 	return ret;
 }
 ```
@@ -146,18 +146,32 @@ bool IsAlive() {
 - TODO 2 & 3: Test some particles.
 Just create them in the start of the scene.
 
+![Image](http://i.imgur.com/SfF4Ikl.png)
+In the picture: seven green balls (particles) with gravity spwaned at the same point in space within different moments.
 - TODO 4 & 5: Set up an emitter.
 You have the class created on the ParticleSystem.h. Treat emitters as Particles, make sure they update and clean up just like them.
 
 - TODO 6: Start shooting particles.
 Here is were the magic happens. Shoot particles with randomised forces, maybe between 1 and 20, and in all four directions.
+```
+void Emitter::Update(float dt)
+{
+	bool negative = false;
 
+	if (negative) force.first *= -1;
+
+	if (negative) force.second *= -1;
+
+	alive = IsAlive();
+}
+```
 - TODO 7: Fill IsAlive() method.
 Well, you might want to add a lifetime to emitters too.
 
 - TODO 8: Create an Emitter.
 Just call the function and see particles jumping everywhere. You can activate and deactivate gravity since the movable particles accept that option.
 
+![Image](http://i.imgur.com/qfvqZBL.png)
 - TODO 9: Set a frequency or your players will become crazy.
 You must not create a new particle on every update, you could possibly create more particles than the ones being deleted. That would make your game unstable on time.
 
